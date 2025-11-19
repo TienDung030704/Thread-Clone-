@@ -1,0 +1,35 @@
+import { createSlice } from "@reduxjs/toolkit";
+import { authRegister } from "@/service/auth/authService";
+const initialState = {
+  loading: false,
+  userInfo: {},
+  success: false,
+  error: null,
+  userToken: null,
+};
+export const authSlice = createSlice({
+  name: "auth",
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(authRegister.pending, (state) => {
+        state.error = null;
+        state.loading = true;
+      })
+      .addCase(authRegister.fulfilled, (state, action) => {
+        state.userInfo = action.payload;
+        access_token
+          ? (state.userToken = action.payload.access_token)
+          : (state.userToken = null);
+        state.success = true;
+        state.loading = false;
+      })
+      .addCase(authRegister.rejected, (state) => {
+        state.success = false;
+        state.loading = false;
+      });
+  },
+});
+export const { reducerPath } = authSlice;
+export default authSlice.reducer;
