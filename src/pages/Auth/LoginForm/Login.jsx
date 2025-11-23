@@ -1,10 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { Instagram, ChevronRight } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { loginSchema } from "@/util/validate";
+import { useAutoLogin, useGetCurrentUser } from "@/features/Auth";
+import toast, { Toaster } from "react-hot-toast";
 
 function Login() {
   const {
@@ -13,14 +15,42 @@ function Login() {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      email: "",
+      login: "",
       password: "",
     },
     resolver: yupResolver(loginSchema),
   });
-  const onSubmit = (data) => {
+  const AutoLogin = useAutoLogin();
+  const CurrentUser = useGetCurrentUser();
+  const navigate = useNavigate();
+
+  const onSubmit = async (data) => {
     console.log(data);
+    try {
+      const result = await AutoLogin(data);
+      // Phần lưu access và refresh
+      if (result.access_token && result.refresh_token) {
+        localStorage.setItem("access_token", result.access_token);
+        localStorage.setItem("refresh_token", result.refresh_token);
+        //  Phần Lưu thông tin user
+        if (result.user) {
+          localStorage.setItem("user_data", JSON.stringify(result.user));
+        }
+        toast.success("Đăng nhập thành công!", {
+          duration: 2000,
+          position: "top-right",
+        });
+
+        // Delay chút để user thấy thông báo
+        setTimeout(() => {
+          navigate("/");
+        }, 2500);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col justify-center h-screen items-center">
@@ -30,12 +60,12 @@ function Login() {
           <Input
             className="w-full h-auto p-4"
             type="email"
-            {...login("email")}
-            placeholder="Email"
+            {...login("login")}
+            placeholder="Login"
           />
-          {errors.email && (
+          {errors.login && (
             <p className="text-red-500 text-sm mt-1 text-left">
-              {errors.email.message}
+              {errors.login.message}
             </p>
           )}
         </div>
@@ -97,6 +127,7 @@ function Login() {
         <span>Chính sách cookie</span>
         <span>Báo cáo sự cố</span>
       </div>
+      <Toaster position="top-right" />
     </form>
   );
 }

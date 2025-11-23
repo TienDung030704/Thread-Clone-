@@ -19,9 +19,7 @@ export const authSlice = createSlice({
       })
       .addCase(authRegister.fulfilled, (state, action) => {
         state.userInfo = action.payload;
-        access_token
-          ? (state.userToken = action.payload.access_token)
-          : (state.userToken = null);
+        state.userToken = action.payload?.access_token || null;
         state.success = true;
         state.loading = false;
       })

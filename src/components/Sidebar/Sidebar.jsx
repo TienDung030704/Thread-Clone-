@@ -22,9 +22,42 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 // import { Button } from "@radix-ui/themes";
-import { Heart, House, Menu, Plus, Search, User } from "lucide-react";
-import { NavLink } from "react-router-dom";
-
+import {
+  Heart,
+  House,
+  Menu,
+  Plus,
+  Search,
+  User,
+  ArrowUpDown,
+  MessageSquare,
+  MoreHorizontal,
+  ArrowBigRight,
+  ChevronRight,
+  Images,
+  ImagePlay,
+  Smile,
+  BookText,
+  Ellipsis,
+  MapPinMinusInside,
+  NotepadTextDashed,
+} from "lucide-react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useAutoLogout } from "@/features/Auth";
+import toast, { Toaster } from "react-hot-toast";
+import { Button as UIButton } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 const navigationItems = [
   {
     path: "/",
@@ -48,6 +81,32 @@ const navigationItems = [
 ];
 
 function Sidebar({}) {
+  // Hàm bấm nút logic đăng xuất
+  const navigate = useNavigate();
+  const userLogOut = useAutoLogout();
+  const handleLogOut = async (data) => {
+    try {
+      const resultLogOut = await userLogOut(data);
+      const access_token = localStorage.getItem("access_token");
+      const refresh_token = localStorage.getItem("refresh_token");
+      const user_data = localStorage.getItem("user_data");
+      if (access_token && refresh_token) {
+        localStorage.removeItem("access_token", access_token);
+        localStorage.removeItem("refresh_token", refresh_token);
+      }
+      if (user_data) {
+        localStorage.removeItem("user_data", JSON.stringify(user_data));
+      }
+      toast.success("Đăng xuất thành công!", {
+        duration: 2000,
+        position: "top-right",
+      });
+      navigate("/auth/login");
+      resultLogOut(data);
+    } catch (error) {
+      throw error;
+    }
+  };
   return (
     <NavigationMenu className="fixed w-20 top-0 left-0 bg-white/96 flex-col h-screen border-r justify-between">
       {/* Icon  */}
@@ -71,19 +130,132 @@ function Sidebar({}) {
         {navigationItems.map((items) => {
           const Comp = items.content;
           return items.path ? (
-            <NavigationMenuItem className="px-9" key={items.path}>
+            <NavigationMenuItem className="px-9 mb-7" key={items.path}>
               <NavigationMenuLink asChild>
-                <NavLink to={items.path}>
-                  <Comp className="size-3 w-7 h-7 my-5" />
+                <NavLink
+                  className={
+                    ({ isActive }) =>
+                      isActive
+                        ? "bg-amber-500 p-3 rounded-xl" // ← Khi active
+                        : "p-3 hover:bg-gray-100 rounded-xl" // ← Khi không active
+                  }
+                  to={items.path}
+                >
+                  <Comp className="size-3 w-7 h-7" />
                 </NavLink>
               </NavigationMenuLink>
             </NavigationMenuItem>
           ) : (
-            <NavigationMenuItem>
+            <NavigationMenuItem className="m-8">
               <NavigationMenuLink asChild className="bg-transparent">
-                <Button className="cursor-pointer w-4 ">
-                  <Comp className="size-3  w-7 h-7 " />
-                </Button>
+                <Dialog>
+                  <form>
+                    <DialogTrigger asChild>
+                      <UIButton className="cursor-pointer w-4 ">
+                        <Comp className="size-3  w-7 h-7 mb-4 " />
+                      </UIButton>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[620px]">
+                      <DialogHeader>
+                        <div className="flex items-center justify-center w-full relative">
+                          {/* Center - Title */}
+                          <DialogTitle className="text-center">
+                            Thread mới
+                          </DialogTitle>
+
+                          {/* Right side - Icons (absolute positioning) */}
+                          <div className="absolute right-0 flex items-center gap-2">
+                            <button className="p-2 hover:bg-gray-100 rounded">
+                              <NotepadTextDashed className="w-5 h-5 text-gray-600" />
+                            </button>
+                            <button className="p-2 hover:bg-gray-100 rounded">
+                              <MoreHorizontal className="w-5 h-5 text-gray-600" />
+                            </button>
+                          </div>
+                        </div>
+                      </DialogHeader>
+                      <div className=" border-b border-b-gray-300"></div>
+                      <div className="">
+                        <div className="flex items-start gap-3">
+                          {/* AVATAR BÊN TRÁI */}
+                          <img
+                            className="w-10 h-10 rounded-full object-cover flex-shrink-0 border-y"
+                            src="avatarcanhan.jpg"
+                            alt="Avatar"
+                          />
+
+                          {/* CONTENT BÊN PHẢI */}
+                          <div className="flex-1">
+                            {/* USERNAME VÀ CHỦ ĐỀ */}
+                            <div className="flex items-center mb-2">
+                              <span className="text-black font-medium">
+                                tiendungg_07
+                              </span>
+                              <ChevronRight className="mx-2 text-gray-400 w-4 h-4" />
+                              <input
+                                className="border-none outline-none bg-transparent flex-1 text-gray-500 text-sm"
+                                placeholder="Thêm chủ đề"
+                              />
+                            </div>
+
+                            {/* NỘI DUNG CHÍNH */}
+                            <div className="mb-1">
+                              <textarea
+                                className="border-none outline-none bg-transparent w-full resize-none text-gray-900 placeholder-gray-400 text-sm"
+                                placeholder="Có gì mới?"
+                                rows="1"
+                              />
+                            </div>
+
+                            {/* ICONS TOOLBAR - INLINE */}
+                            <div className="flex gap-4 mb-4">
+                              <button className="hover:bg-gray-100 rounded p-1">
+                                <Images className="w-5 h-5 text-gray-500" />
+                              </button>
+                              <button className="hover:bg-gray-100 rounded p-1">
+                                <ImagePlay className="w-5 h-5 text-gray-500" />
+                              </button>
+                              <button className="hover:bg-gray-100 rounded p-1">
+                                <Smile className="w-5 h-5 text-gray-500" />
+                              </button>
+                              <button className="hover:bg-gray-100 rounded p-1">
+                                <Ellipsis className="w-5 h-5 text-gray-500" />
+                              </button>
+                              <button className="hover:bg-gray-100 rounded p-1">
+                                <BookText className="w-5 h-5 text-gray-500" />
+                              </button>
+                              <button className="hover:bg-gray-100 rounded p-1">
+                                <MapPinMinusInside className="w-5 h-5 text-gray-500" />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* THÊM VÀO THREAD - RIÊNG BIỆT */}
+                        <div className="flex items-center gap-2 text-gray-400  ml-2">
+                          <img
+                            className="w-4 h-4 rounded-full object-cover"
+                            src="avatarcanhan.jpg"
+                            alt=""
+                          />
+                          <span className="text-sm ml-5">Thêm vào thread</span>
+                        </div>
+                      </div>
+                      <DialogFooter className="flex justify-between ">
+                        <div className="flex items-center flex-1">
+                          <ArrowUpDown className="w-4 h-4 cursor-pointer" />
+                          <Button
+                            className="border-none  text-gray-400 "
+                            variant="outline"
+                          >
+                            Các lựa chọn để kiểm soát câu trả lời
+                          </Button>
+                        </div>
+                        <Button type="submit">Đăng</Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </form>
+                </Dialog>
               </NavigationMenuLink>
             </NavigationMenuItem>
           );
@@ -101,46 +273,50 @@ function Sidebar({}) {
           <DropdownMenuContent className="w-56" align="start">
             <DropdownMenuGroup>
               <DropdownMenuSub>
-                <DropdownMenuSubTrigger className="text-lg font-medium text-black">
+                <DropdownMenuSubTrigger className="text-[15px] font-medium text-black p-2">
                   Giao diện
                 </DropdownMenuSubTrigger>
                 <DropdownMenuPortal>
                   <DropdownMenuSubContent>
-                    <DropdownMenuItem className="text-lg font-medium text-black">
+                    <DropdownMenuItem className="text-[15px] font-medium text-black p-2">
                       Giao diện
                     </DropdownMenuItem>
                   </DropdownMenuSubContent>
                 </DropdownMenuPortal>
               </DropdownMenuSub>
-              <DropdownMenuItem className="text-lg font-medium text-black">
+              <DropdownMenuItem className="text-[15px] font-medium text-black p-2">
                 Thông tn chi tiết
               </DropdownMenuItem>
-              <DropdownMenuItem className="text-lg font-medium text-black">
+              <DropdownMenuItem className="text-[15px] font-medium text-black p-2">
                 Cài đặt
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem className="text-lg font-medium text-black">
+              <DropdownMenuItem className="text-[15px] font-medium text-black p-2">
                 Bảng feed
               </DropdownMenuItem>
-              <DropdownMenuItem className="text-lg font-medium text-black">
+              <DropdownMenuItem className="text-[15px] font-medium text-black p-2">
                 Đã lưu
               </DropdownMenuItem>
-              <DropdownMenuItem className="text-lg font-medium text-black">
+              <DropdownMenuItem className="text-[15px] font-medium text-black p-2">
                 Đã thích
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-lg font-medium text-black">
+            <DropdownMenuItem className="text-[15px] font-medium text-black p-2">
               Báo cáo sự cố
             </DropdownMenuItem>
-            <DropdownMenuItem className="text-lg font-medium text-red-500">
+            <DropdownMenuItem
+              onClick={handleLogOut}
+              className="text-[15px] font-medium text-black p-2 text-red-500"
+            >
               Đăng xuất
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+      <Toaster />
     </NavigationMenu>
   );
 }

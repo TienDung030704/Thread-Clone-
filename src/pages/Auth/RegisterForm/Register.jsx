@@ -1,17 +1,29 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { registerSchema } from "@/util/validate";
-import { useCurrentUser } from "@/features/Auth";
-// import * as authService from "@/service/auth/authService";
+import { useGetCurrentUser } from "@/features/Auth";
+import { useAutoRegister } from "@/features/Auth/hook";
+import toast, { Toaster } from "react-hot-toast";
+//  Cái hook tu custom phai de ma goi useAutoRegister trong  onSubmit -> nay la ko dung quy tac
+/*
+- Tuc la React Hooks no co quy dinh goi ham tu custom theo quy tac sau:
++ Chi duoc goi HOOK trong cacs truong hop sau:
++ Trong than ham function component hoac trong than cua custom khac
+
++ Khong goi duoc custom hook khi no o trong callback onSubmit onClick cac suj kien handler 
++ Hoac trong dieu kien if else for while => tat ca cau dieu kien se ko dc
+
+*/
 function Register() {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({
+    mode: "onSubmit",
     defaultValues: {
       username: "",
       email: "",
@@ -20,10 +32,54 @@ function Register() {
     },
     resolver: yupResolver(registerSchema),
   });
-  const CurrentUser = useCurrentUser();
+
+  // ======= DOAN NAY BI SAI DO useAutoRegister GOI BEN TRONG ONSUMIT -> PHAI GOI O TREN TOP LEVEL CUA COMPONENT =====
+
+  // useAutoRegister();
+  // const GetCurrentUser = useGetCurrentUser();
+  // const navigate = useNavigate();
+  // const onSubmit = async (data) => {
+  //   try {
+  //     // CHinh no dang bi goij trong ham onSumit nen ko the lam goi dc
+  //     const { access_token, refresh_token } = await useAutoRegister(
+  //       authRegister(data)
+  //     );
+  //     if (access_token && refresh_token) {
+  //       localStorage.setItem("token", access_token, refresh_token);
+  //       navigate("/auth/login");
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
+  // ======== SUA LAI ====
+  const autoRegister = useAutoRegister();
+  const navigate = useNavigate();
+  const currentUser = useGetCurrentUser();
+
   const onSubmit = async (data) => {
+    console.log(data);
     try {
-    } catch {}
+      const result = await autoRegister(data);
+      if (result.access_token && result.refresh_token) {
+        //  CHi nhan dc 2 tham key va value
+        localStorage.setItem("access_token", result.access_token);
+        localStorage.setItem("refresh_token", result.refresh_token);
+
+        toast.success("Đăng ký thành công!", {
+          duration: 2000,
+          position: "top-right",
+        });
+
+        // Delay chút để user thấy thông báo
+        setTimeout(() => {
+          navigate("/auth/login");
+        }, 2000);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -121,14 +177,8 @@ function Register() {
         <span>Cookies Policy</span>
         <span>Report a problem</span>
       </div>
+      <Toaster />
     </form>
   );
 }
-import { useCurrentUser } from "@/features/Auth";
 export default Register;
-// const { access_token } = await authService.authRegister(data);
-// console.log(access_token);
-// if (access_token) {
-//   localStorage.setItem("token", access_token);
-//   navigate("/auth/login");
-// }

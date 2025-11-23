@@ -11,6 +11,13 @@ httpClient.interceptors.request.use((config) => {
   }
   return config;
 });
+
+httpClient.interceptors.response.use(
+  (res) => res,
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 const _send = async (method, path, data, config) => {
   const response = await httpClient.request({
     ...config,

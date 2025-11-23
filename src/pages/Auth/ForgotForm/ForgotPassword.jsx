@@ -3,6 +3,10 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { forgotSchema } from "@/util/validate";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useAutoForgot } from "@/features/Auth";
+import { Toaster } from "react-hot-toast";
+import { useNavigate } from "react-router";
+
 function ForgotPassword() {
   const {
     register: forgotpassword, // Đổi tên register thành login
@@ -11,12 +15,27 @@ function ForgotPassword() {
   } = useForm({
     defaultValues: {
       email: "",
-      password: "",
     },
     resolver: yupResolver(forgotSchema),
   });
-  const onSubmit = (data) => {
-    console.log(data);
+  const navigate = useNavigate();
+  const currentForgot = useAutoForgot();
+  const onSubmit = async (data) => {
+    try {
+      const result = await currentForgot(data);
+      if (data.email) {
+        alert("chúng tôi đã gửi yêu cầu đặt lại mật khẩu tới email bạn");
+        console.log(data);
+        return result;
+      }
+      toast.success("Đặt lại mật khẩu thành công!", {
+        duration: 2000,
+        position: "top-right",
+      });
+      navigate("/auth/reset-password");
+    } catch (error) {
+      throw error;
+    }
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -50,6 +69,7 @@ function ForgotPassword() {
         <span>Chính sách cookie</span>
         <span>Báo cáo sự cố</span>
       </div>
+      <Toaster />
     </form>
   );
 }
