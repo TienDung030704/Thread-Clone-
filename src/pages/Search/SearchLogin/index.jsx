@@ -3,7 +3,7 @@ import LoginPanel from "@/components/LoginPanel";
 import PostCard from "@/components/posts/PostCard";
 import Sidebar from "@/components/Sidebar/Sidebar";
 import { Input } from "@/components/ui/input";
-import { Search, SlidersHorizontal } from "lucide-react";
+import { Clock, Search, SlidersHorizontal, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { useAutoSearch } from "@/features/SearchFollow/hook";
@@ -70,53 +70,25 @@ function SearchLogin() {
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" align="start">
                 <DropdownMenuGroup>
-                  <DropdownMenuItem>
+                  <DropdownMenuItem className="text-[16px] text-black font-bold mb-2">
                     Sau ngày
-                    <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+                    <DropdownMenuShortcut>
+                      <Clock />
+                    </DropdownMenuShortcut>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
+                  <DropdownMenuItem className="text-[16px] text-black font-bold mb-2">
                     Trước ngày
-                    <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
+                    <DropdownMenuShortcut>
+                      <Clock />
+                    </DropdownMenuShortcut>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    Settings
-                    <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    Keyboard shortcuts
-                    <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <DropdownMenuItem>Team</DropdownMenuItem>
-                  <DropdownMenuSub>
-                    <DropdownMenuSubTrigger>
-                      Invite users
-                    </DropdownMenuSubTrigger>
-                    <DropdownMenuPortal>
-                      <DropdownMenuSubContent>
-                        <DropdownMenuItem>Email</DropdownMenuItem>
-                        <DropdownMenuItem>Message</DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem>More...</DropdownMenuItem>
-                      </DropdownMenuSubContent>
-                    </DropdownMenuPortal>
-                  </DropdownMenuSub>
-                  <DropdownMenuItem>
-                    New Team
-                    <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
+                  <DropdownMenuItem className="text-[16px] text-black font-bold mb-2">
+                    Từ trang cá nhân
+                    <DropdownMenuShortcut>
+                      <User />
+                    </DropdownMenuShortcut>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>GitHub</DropdownMenuItem>
-                <DropdownMenuItem>Support</DropdownMenuItem>
-                <DropdownMenuItem disabled>API</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  Log out
-                  <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

@@ -5,12 +5,56 @@ export const httpClient = axios.create({
 });
 
 httpClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    config.headers.set("Authorization", `Bearer ${token}`);
+  const access_token = localStorage.getItem("access_token");
+  if (access_token) {
+    config.headers.Authorization = `Bearer ${access_token}`;
   }
   return config;
 });
+
+let isRefreshing = false;
+let failedQueue = [];
+
+const refreshToken = async () => {
+  try {
+    const result = await post("auth/refresh", {
+      refresh_token: localStorage.getItem("refresh_token"),
+    });
+    localStorage.setItem("access_token", result.data.access_token);
+    localStorage.setItem("refresh_token", result.data.refresh_token);
+
+    processQueue(null);
+  } catch (error) {
+    processQueue(error);
+    throw error;
+  }
+};
+
+const getNewToken = async () => {
+  if (!isRefreshing) {
+    isRefreshing = true;
+    await refreshToken();
+    isRefreshing = false;
+    return;
+  }
+
+  // Return a promise that resolves with the new token
+  return new Promise((resolve, reject) => {
+    failedQueue.push({ resolve, reject });
+  });
+};
+
+const processQueue = (error) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve();
+    }
+  });
+
+  failedQueue = [];
+};
 
 httpClient.interceptors.response.use(
   (res) => res,
@@ -18,6 +62,28 @@ httpClient.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+// Handle refresh token
+httpClient.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+    const shouldRenewToken =
+      error.response.status === 401 && !originalRequest._retry;
+
+    if (shouldRenewToken) {
+      originalRequest._retry = true;
+      try {
+        await getNewToken();
+        return httpClient(originalRequest);
+      } catch (error) {
+        return Promise.reject(error);
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 const _send = async (method, path, data, config) => {
   const response = await httpClient.request({
     ...config,

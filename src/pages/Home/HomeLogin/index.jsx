@@ -41,16 +41,22 @@ import PostCard from "@/components/posts/PostCard";
 import Sidebar from "@/components/Sidebar/Sidebar";
 import { useEffect, useState } from "react";
 import { useProductList } from "@/features/product/hook";
+import Modal from "@/components/Modal";
+import InfiniteScroll from "react-infinite-scroll-component";
 function HomeLogin() {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(false);
   const autoProduct = useProductList();
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true); // ← Cần thêm
+  // UseEffect render ra dữ liệu bài post
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
         const result = await autoProduct();
         if (result) {
+          console.log(result);
           setList(result);
         }
       } catch (error) {
@@ -62,6 +68,21 @@ function HomeLogin() {
     };
     fetchData();
   }, []);
+  // Fetch thêm data cho infinite scroll
+  const fetchMoreData = async () => {
+    try {
+      const result = await autoProduct(page);
+      if (result && result.length > 0) {
+        setList((prevList) => [...result, ...prevList]);
+        setPage(page + 1);
+      } else {
+        setHasMore(false); // Hết data
+      }
+    } catch (error) {
+      console.log(error);
+      setHasMore(false);
+    }
+  };
   return (
     <div>
       {/* Đã đăng nhập template */}
@@ -111,143 +132,171 @@ function HomeLogin() {
               <span className="ml-3 text-gray-600">Đang tải...</span>
             </div>
           ) : (
-            <ul className="flex flex-col justify-center items-center">
-              {/* Có gì mới  */}
-              <div className="w-full border-b border-gray-200 p-4 bg-white">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
-                  <input
-                    type="text"
-                    placeholder="Có gì mới?"
-                    className="flex-1 bg-transparent text-gray-500 placeholder-gray-400 outline-none"
-                  />
-                  <Button className="px-4 py-2 bg-gray-100 text-gray-700 text-sm rounded-lg">
-                    Đăng
-                  </Button>
+            <InfiniteScroll
+              dataLength={list.length}
+              next={fetchMoreData} // ← Function load thêm
+              hasMore={hasMore} // ← State kiểm tra còn data
+              loader={
+                <div className="flex items-center justify-center p-4">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900"></div>
+                  <span className="ml-2">Đang tải thêm...</span>
                 </div>
-              </div>
-              {list.map((item) => (
-                <li
-                  className="w-full h-full px-3 py-6 border-t border-b"
-                  key={item.id}
-                >
-                  <div className="flex justify-center items-center gap-2.5">
-                    <img
-                      className="w-8 h-8 rounded-full"
-                      src={item.user.avatar_url}
-                      alt=""
-                    />
-                    <div className="flex flex-col flex-1">
-                      <article className="flex items-center">
-                        <span className="text-black font-medium">
-                          {item.user.username}
-                        </span>
-                        <span className="ml-1.5 text-gray-500">
-                          {new Date(item.updated_at).toLocaleString("vi-VN")}
-                        </span>
-                        <button className="ml-auto relative">
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button className="border-none" variant="outline">
-                                <Ellipsis className="cursor-pointer" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className="w-56" align="start">
-                              <DropdownMenuGroup>
-                                <DropdownMenuSub>
-                                  <DropdownMenuSubTrigger className="text-[15px] font-medium text-black p-2">
-                                    Thêm vào bảng tin
-                                  </DropdownMenuSubTrigger>
-                                  <DropdownMenuPortal>
-                                    <DropdownMenuSubContent>
-                                      <DropdownMenuItem>
-                                        Thêm vào bảng feed
-                                        <DropdownMenuShortcut>
-                                          <MoveLeft />
-                                        </DropdownMenuShortcut>
-                                      </DropdownMenuItem>
-                                      <DropdownMenuItem>
-                                        Tạo bảng feed mới
-                                        <DropdownMenuShortcut>
-                                          <BadgePlus />
-                                        </DropdownMenuShortcut>
-                                      </DropdownMenuItem>
-                                    </DropdownMenuSubContent>
-                                  </DropdownMenuPortal>
-                                </DropdownMenuSub>
-                              </DropdownMenuGroup>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuGroup>
+              }
+              endMessage={
+                <p className="text-center p-4 text-gray-500">
+                  Đã xem hết bài viết!
+                </p>
+              }
+            >
+              <ul className="flex flex-col justify-center items-center">
+                {/* Có gì mới  */}
+                <div className="w-full border-b border-gray-200 p-4 bg-white">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
+                    <Modal>
+                      <input
+                        type="text"
+                        placeholder="Có gì mới?"
+                        className="flex-1 bg-transparent text-gray-500 placeholder-gray-400 outline-none"
+                      />
+                    </Modal>
+                    <Modal>
+                      <Button className="px-4 py-2 bg-gray-100 hover:bg-black text-gray-700 hover:text-white text-sm rounded-lg ml-70 transition-colors">
+                        Đăng
+                      </Button>
+                    </Modal>
+                  </div>
+                </div>
+                {list.map((item) => (
+                  <li
+                    className="w-full h-full px-3 py-6 border-t border-b"
+                    key={item.id}
+                  >
+                    <div className="flex justify-center items-center gap-2.5">
+                      <img
+                        className="w-8 h-8 rounded-full"
+                        src={item.user.avatar_url}
+                        alt=""
+                      />
+                      <div className="flex flex-col flex-1">
+                        <article className="flex items-center">
+                          <span className="text-black font-medium">
+                            {item.user.username}
+                          </span>
+                          <span className="ml-1.5 text-gray-500">
+                            {new Date(item.updated_at).toLocaleString("vi-VN")}
+                          </span>
+                          <button className="ml-auto relative">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button
+                                  className="border-none"
+                                  variant="outline"
+                                >
+                                  <Ellipsis className="cursor-pointer" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent
+                                className="w-56"
+                                align="start"
+                              >
+                                <DropdownMenuGroup>
+                                  <DropdownMenuSub>
+                                    <DropdownMenuSubTrigger className="text-[15px] font-medium text-black p-2">
+                                      Thêm vào bảng tin
+                                    </DropdownMenuSubTrigger>
+                                    <DropdownMenuPortal>
+                                      <DropdownMenuSubContent>
+                                        <DropdownMenuItem>
+                                          Thêm vào bảng feed
+                                          <DropdownMenuShortcut>
+                                            <MoveLeft />
+                                          </DropdownMenuShortcut>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem>
+                                          Tạo bảng feed mới
+                                          <DropdownMenuShortcut>
+                                            <BadgePlus />
+                                          </DropdownMenuShortcut>
+                                        </DropdownMenuItem>
+                                      </DropdownMenuSubContent>
+                                    </DropdownMenuPortal>
+                                  </DropdownMenuSub>
+                                </DropdownMenuGroup>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuGroup>
+                                  <DropdownMenuItem className="text-[15px] font-medium text-black p-2">
+                                    Lưu
+                                    <DropdownMenuShortcut>
+                                      <Bookmark />
+                                    </DropdownMenuShortcut>
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem className="text-[15px] font-medium text-black p-2">
+                                    Không quan tâm
+                                    <DropdownMenuShortcut>
+                                      <Users />
+                                    </DropdownMenuShortcut>
+                                  </DropdownMenuItem>
+                                </DropdownMenuGroup>
+                                <DropdownMenuSeparator />
                                 <DropdownMenuItem className="text-[15px] font-medium text-black p-2">
-                                  Lưu
+                                  Tắt thông báo
                                   <DropdownMenuShortcut>
-                                    <Bookmark />
+                                    <Volume2 />
                                   </DropdownMenuShortcut>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem className="text-[15px] font-medium text-black p-2">
-                                  Không quan tâm
+                                  Hạn chế
                                   <DropdownMenuShortcut>
-                                    <Users />
+                                    <LinkIcon />
                                   </DropdownMenuShortcut>
                                 </DropdownMenuItem>
-                              </DropdownMenuGroup>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem className="text-[15px] font-medium text-black p-2">
-                                Tắt thông báo
-                                <DropdownMenuShortcut>
-                                  <Volume2 />
-                                </DropdownMenuShortcut>
-                              </DropdownMenuItem>
-                              <DropdownMenuItem className="text-[15px] font-medium text-black p-2">
-                                Hạn chế
-                                <DropdownMenuShortcut>
-                                  <LinkIcon />
-                                </DropdownMenuShortcut>
-                              </DropdownMenuItem>
-                              <DropdownMenuItem className="text-[15px] font-medium text-black p-2">
-                                Chặn
-                                <DropdownMenuShortcut>
-                                  <LockKeyhole />
-                                </DropdownMenuShortcut>
-                              </DropdownMenuItem>
-                              <DropdownMenuItem className="text-[15px] font-medium text-black p-2">
-                                Báo cáo
-                                <DropdownMenuShortcut>
-                                  <AlertCircle />
-                                </DropdownMenuShortcut>
-                              </DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem className="text-[15px] font-medium text-black p-2">
-                                Sao chép liên kết
-                                <DropdownMenuShortcut>
-                                  <LinkIcon />
-                                </DropdownMenuShortcut>
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </button>
-                      </article>
-                      <span className="">{item.content}</span>
+                                <DropdownMenuItem className="text-[15px] font-medium text-black p-2">
+                                  Chặn
+                                  <DropdownMenuShortcut>
+                                    <LockKeyhole />
+                                  </DropdownMenuShortcut>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className="text-[15px] font-medium text-black p-2">
+                                  Báo cáo
+                                  <DropdownMenuShortcut>
+                                    <AlertCircle />
+                                  </DropdownMenuShortcut>
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem className="text-[15px] font-medium text-black p-2">
+                                  Sao chép liên kết
+                                  <DropdownMenuShortcut>
+                                    <LinkIcon />
+                                  </DropdownMenuShortcut>
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </button>
+                        </article>
+                        <span className="">{item.content}</span>
+                      </div>
                     </div>
-                  </div>
-                  <div>
-                    <img
-                      className="max-h-96 w-auto object-cover rounded-md mt-2 ml-10"
-                      src={item.image}
-                      alt=""
-                    />
-                  </div>
-                  <div className="ml-5 pt-2">
-                    <InteractionBar
-                      likes={item.likes_count}
-                      comments={item.replies_count}
-                      shares={item.shares}
-                      reposts={item.reposts_and_quotes_count}
-                    />
-                  </div>
-                </li>
-              ))}
-            </ul>
+                    <div>
+                      <img
+                        className="max-h-96 w-auto object-cover rounded-md mt-2 ml-10"
+                        src={item.image}
+                        alt=""
+                      />
+                    </div>
+                    <div className="ml-5 pt-2">
+                      <InteractionBar
+                        likes={item.likes_count}
+                        comments={item.replies_count}
+                        shares={item.shares}
+                        reposts={item.reposts_and_quotes_count}
+                        postId={item.id}
+                      />
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </InfiniteScroll>
           )}
         </PostCard>
       </div>
