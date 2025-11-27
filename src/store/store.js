@@ -3,6 +3,7 @@ import { authSlice } from "@/features/Auth";
 import { productSlice } from "@/features/product/productSlice";
 import { searchSlice } from "@/features/SearchFollow/searchSlice";
 import { postSlice } from "@/features/Post/postSlice";
+import { fetchSlice } from "@/features/product/fetchSlice";
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     [productSlice.reducerPath]: productSlice.reducer,
     [searchSlice.reducerPath]: searchSlice.reducer,
     [postSlice.reducerPath]: postSlice.reducer,
+    [fetchSlice.reducerPath]: fetchSlice.reducer,
   },
 });
 window.store = store;

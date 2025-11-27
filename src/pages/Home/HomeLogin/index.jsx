@@ -40,15 +40,17 @@ import Header from "@/components/Header";
 import PostCard from "@/components/posts/PostCard";
 import Sidebar from "@/components/Sidebar/Sidebar";
 import { useEffect, useState } from "react";
-import { useProductList } from "@/features/product/hook";
+import { useFetchProduct, useProductList } from "@/features/product/hook";
 import Modal from "@/components/Modal";
 import InfiniteScroll from "react-infinite-scroll-component";
 function HomeLogin() {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(false);
-  const autoProduct = useProductList();
   const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true); // ← Cần thêm
+  const [hasMore, setHasMore] = useState(true);
+  const autoProduct = useProductList();
+  const autoFetch = useFetchProduct();
+
   // UseEffect render ra dữ liệu bài post
   useEffect(() => {
     const fetchData = async () => {
@@ -68,21 +70,14 @@ function HomeLogin() {
     };
     fetchData();
   }, []);
+
   // Fetch thêm data cho infinite scroll
   const fetchMoreData = async () => {
-    try {
-      const result = await autoProduct(page);
-      if (result && result.length > 0) {
-        setList((prevList) => [...result, ...prevList]);
-        setPage(page + 1);
-      } else {
-        setHasMore(false); // Hết data
-      }
-    } catch (error) {
-      console.log(error);
-      setHasMore(false);
-    }
+    const result = await autoFetch(page);
+    console.log(result);
+    return result;
   };
+
   return (
     <div>
       {/* Đã đăng nhập template */}

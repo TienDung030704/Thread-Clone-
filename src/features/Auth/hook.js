@@ -55,7 +55,7 @@ export const useAutoLogout = () => {
   return logout;
 };
 
-// Ham dispatch de dispatch toi API logout
+// Ham dispatch de dispatch toi API forgot
 export const useAutoForgot = () => {
   const dispatch = useDispatch();
   const forgot = async (data) => {
