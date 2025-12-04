@@ -15,9 +15,9 @@ function LoginPanel() {
         <button className="cursor-pointer">
           <div className="  mt-4 p-5 gap-4 bg-white rounded-2xl flex items-center">
             <Instagram />
-            <button className="font-bold text-black text-[14px] whitespace-nowrap">
+            <div className="font-bold text-black text-[14px] whitespace-nowrap">
               Tiếp tục bằng Instagram
-            </button>
+            </div>
           </div>
         </button>
         <button className="text-gray-500 text-center mt-5">

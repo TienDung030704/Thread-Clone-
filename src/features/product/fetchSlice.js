@@ -20,10 +20,10 @@ export const fetchSlice = createSlice({
       } else {
         state.hasMore = false;
       }
-      builder.addCase(fetchPosts.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error;
-      });
+    });
+    builder.addCase(fetchPosts.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error;
     });
   },
 });

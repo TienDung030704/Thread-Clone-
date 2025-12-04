@@ -4,6 +4,8 @@ import { productSlice } from "@/features/product/productSlice";
 import { searchSlice } from "@/features/SearchFollow/searchSlice";
 import { postSlice } from "@/features/Post/postSlice";
 import { fetchSlice } from "@/features/product/fetchSlice";
+import { repostSlice } from "@/features/Post/repostSlice";
+import { savePostSlice } from "@/features/Post/savePost/savePostSlice";
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +14,8 @@ export const store = configureStore({
     [searchSlice.reducerPath]: searchSlice.reducer,
     [postSlice.reducerPath]: postSlice.reducer,
     [fetchSlice.reducerPath]: fetchSlice.reducer,
+    [repostSlice.reducerPath]: repostSlice.reducer,
+    [savePostSlice.reducerPath]: savePostSlice.reducer,
   },
 });
 window.store = store;

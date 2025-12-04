@@ -43,11 +43,9 @@ import {
   NotepadTextDashed,
 } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { useAutoLogout } from "@/features/Auth";
 import toast, { Toaster } from "react-hot-toast";
 import { Button as UIButton } from "@/components/ui/button";
-
-import Modal from "@/components/Modal";
+import ModalNotLogin from "../ModalNotLogin";
 const navigationItems = [
   {
     path: "/",
@@ -70,33 +68,7 @@ const navigationItems = [
   },
 ];
 
-function Sidebar({}) {
-  // Hàm bấm nút logic đăng xuất
-  const navigate = useNavigate();
-  const userLogOut = useAutoLogout();
-  const handleLogOut = async (data) => {
-    try {
-      const resultLogOut = await userLogOut(data);
-      const access_token = localStorage.getItem("access_token");
-      const refresh_token = localStorage.getItem("refresh_token");
-      const user_data = localStorage.getItem("user_data");
-      if (access_token && refresh_token) {
-        localStorage.removeItem("access_token", access_token);
-        localStorage.removeItem("refresh_token", refresh_token);
-      }
-      if (user_data) {
-        localStorage.removeItem("user_data", JSON.stringify(user_data));
-      }
-      toast.success("Đăng xuất thành công!", {
-        duration: 2000,
-        position: "top-right",
-      });
-      navigate("/auth/login");
-      resultLogOut(data);
-    } catch (error) {
-      throw error;
-    }
-  };
+function SidebarNotLogin({}) {
   return (
     <NavigationMenu className="fixed w-20 top-0 left-0 bg-white/96 flex-col h-screen border-r justify-between">
       {/* Icon  */}
@@ -138,11 +110,11 @@ function Sidebar({}) {
           ) : (
             <NavigationMenuItem className="m-8" key={items.content}>
               <NavigationMenuLink asChild className="bg-transparent">
-                <Modal>
+                <ModalNotLogin>
                   <UIButton className="cursor-pointer w-4 bg-transparent border-none hover:bg-gray-100">
                     <Comp className=" size-2 w-10 h-10 text-black" />
                   </UIButton>
-                </Modal>
+                </ModalNotLogin>
               </NavigationMenuLink>
             </NavigationMenuItem>
           );
@@ -171,35 +143,11 @@ function Sidebar({}) {
                   </DropdownMenuSubContent>
                 </DropdownMenuPortal>
               </DropdownMenuSub>
+              <DropdownMenuSeparator />
               <DropdownMenuItem className="text-[15px] font-medium text-black p-2">
-                Thông tn chi tiết
-              </DropdownMenuItem>
-              <DropdownMenuItem className="text-[15px] font-medium text-black p-2">
-                Cài đặt
+                Báo cáo sự cố
               </DropdownMenuItem>
             </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem className="text-[15px] font-medium text-black p-2">
-                Bảng feed
-              </DropdownMenuItem>
-              <DropdownMenuItem className="text-[15px] font-medium text-black p-2">
-                Đã lưu
-              </DropdownMenuItem>
-              <DropdownMenuItem className="text-[15px] font-medium text-black p-2">
-                Đã thích
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-[15px] font-medium text-black p-2">
-              Báo cáo sự cố
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={handleLogOut}
-              className="text-[15px] font-medium text-black p-2 text-red-500"
-            >
-              Đăng xuất
-            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -208,4 +156,4 @@ function Sidebar({}) {
   );
 }
 
-export default Sidebar;
+export default SidebarNotLogin;

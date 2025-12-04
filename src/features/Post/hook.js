@@ -23,3 +23,7 @@ export const useGetCurrentLike = () => {
   const currentLike = useSelector((state) => state.list.currentLike);
   return currentLike;
 };
+export const useGetCurrentRespost = () => {
+  const currentRespost = useSelector((state) => state.list.currentRespost);
+  return currentRespost;
+};

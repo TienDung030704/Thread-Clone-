@@ -11,6 +11,7 @@ import ForgotPassword from "@/pages/Auth/ForgotForm/ForgotPassword";
 import Search from "@/pages/Search";
 import HeartPage from "@/pages/Heart";
 import Individual from "@/pages/Individual";
+import SavePage from "@/pages/SavePage";
 
 function AppRoutes() {
   return (
@@ -20,6 +21,7 @@ function AppRoutes() {
         <Route path="/search" element={<Search />}></Route>
         <Route path="/heart" element={<HeartPage />}></Route>
         <Route path="/individual" element={<Individual />}></Route>
+        <Route path="/save" element={<SavePage />}></Route>
       </Route>
       <Route element={<AuthLayout />}>
         <Route path="/auth/login" element={<Login />} />

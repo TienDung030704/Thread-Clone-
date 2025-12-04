@@ -29,7 +29,7 @@ function Login() {
     try {
       const result = await AutoLogin(data);
       // Phần lưu access và refresh
-      if (result.access_token && result.refresh_token) {
+      if (result && result.access_token && result.refresh_token) {
         localStorage.setItem("access_token", result.access_token);
         localStorage.setItem("refresh_token", result.refresh_token);
         //  Phần Lưu thông tin user
@@ -48,6 +48,13 @@ function Login() {
       }
     } catch (error) {
       console.log(error);
+      const status = error?.status;
+      if (status === 401 || status == 422) {
+        toast.error("Đăng nhập thất bại! Sai tài khoản hoặc mật khẩu", {
+          duration: 2000,
+          position: "top-right",
+        });
+      }
     }
   };
 

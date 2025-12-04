@@ -1,81 +1,151 @@
-import { Heart, MessageCircle, Share, Repeat2 } from "lucide-react";
+import { Heart, MessageCircle, Share, Repeat2, Link, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAutoRePost, useLikePost } from "@/features/Post/hook";
+import { useState } from "react";
+import ReplyModal from "@/components/posts/ReplyModal";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
 function InteractionBar({
   likes = 0,
   comments = 0,
   shares = 0,
   reposts = 0,
   postId,
+  userHasLiked = false,
+  userHasRepost = false,
+  post,
+  contentCommentUser,
 }) {
+  const autoLike = useLikePost();
+  const [likeCount, setlikeCount] = useState(likes);
+  const [isLiked, setIsLiked] = useState(userHasLiked);
+  const [repostCount, setRepostCount] = useState(reposts);
+  const [isReposted, setIsReposted] = useState(userHasRepost);
+  const autoRepost = useAutoRePost(postId);
+
+  const handleLike = async (postId) => {
+    try {
+      if (!isLiked) {
+        setlikeCount(likeCount + 1);
+        setIsLiked(true);
+        await autoLike(postId);
+      } else {
+        setlikeCount(likeCount - 1);
+        setIsLiked(false);
+        await autoLike(postId);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleRepost = async (postId) => {
+    try {
+      if (!isReposted) {
+        setRepostCount(repostCount + 1);
+        setIsReposted(true);
+        await autoRepost(postId);
+      } else {
+        setRepostCount(repostCount - 1);
+        setIsReposted(false);
+        await autoRepost(postId);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const Interactions = [
     {
       icon: Heart,
-      count: likes,
+      count: likeCount,
       action: () => handleLike(postId),
+      key: "like",
     },
-    {
-      icon: MessageCircle,
-      count: comments,
-      action: () => handleMessage(postId),
-    },
+    { icon: MessageCircle, count: comments, action: null, key: "comment" },
     {
       icon: Repeat2,
-      count: reposts,
+      count: repostCount,
       action: () => handleRepost(postId),
+      key: "repost",
     },
-    {
-      icon: Share,
-      count: shares,
-      action: () => handleShare(postId),
-    },
+    { icon: Share, count: shares, action: null, key: "share" }, // Share action null vì dropdown sẽ xử lý
   ];
-  const autoLike = useLikePost();
-  const autoRepost = useAutoRePost(postId);
-  const handleLike = async (postId) => {
-    const result = await autoLike(postId);
-    try {
-      if (postId) {
-        return result;
-      }
-    } catch (error) {
-      throw error;
-    }
-  };
-  const handleMessage = () => {
-    console.log("handleMessage");
-  };
-  const handleRepost = async (postId) => {
-    const result = await autoRepost(postId);
-    try {
-      if (postId) {
-        return result;
-      }
-    } catch (error) {
-      throw error;
-    }
-  };
-  const handleShare = () => {
-    console.log("handleShare");
-  };
 
   return (
     <div className="flex gap-4 mt-3">
-      {Interactions.map((icons, index) => {
-        const Inter = icons.icon;
+      {Interactions.map((item, index) => {
+        const Icon = item.icon;
+
+        // Tạo nút bấm chung
+        const ActionButton = (
+          <Button
+            onClick={item.action ? item.action : undefined}
+            className="border-none p-2 h-auto rounded-full hover:bg-gray-100"
+            variant="ghost" // Đổi thành ghost hoặc giữ border-none tùy theme
+          >
+            <Icon
+              className={`w-5 h-5 ${
+                index === 0 && isLiked
+                  ? "text-red-600 fill-red-600"
+                  : index === 2 && isReposted
+                  ? "text-blue-700 fill-blue-600"
+                  : "text-gray-700"
+              }`}
+            />
+          </Button>
+        );
+
         return (
           <div key={index} className="flex items-center gap-1">
-            <button className="p-1">
-              <Button
-                onClick={icons.action ? icons.action : undefined}
-                className="border-none"
-                variant="outline"
+            {item.key === "comment" ? (
+              // 1. Trường hợp Comment
+              <ReplyModal
+                postSingle={post}
+                postCommentUser={contentCommentUser}
               >
-                <Inter className="w-5 h-5 size-1" />
-              </Button>
-            </button>
-            {icons.count >= 0 && (
-              <span className="text-sm text-gray-600">{icons.count}</span>
+                {ActionButton}
+              </ReplyModal>
+            ) : item.key === "share" ? (
+              // 2. Trường hợp Share (SỬA Ở ĐÂY)
+              <DropdownMenu>
+                {/* asChild giúp Trigger nhận diện ActionButton là phần tử kích hoạt */}
+                <DropdownMenuTrigger>{ActionButton}</DropdownMenuTrigger>
+
+                <DropdownMenuContent align="start">
+                  <DropdownMenuItem
+                    className="font-medium text-[16px]"
+                    onClick={() => console.log("Copy Link")}
+                  >
+                    <Link className="mr-2 h-4 w-4 " /> Sao chép liên kết
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="font-medium text-[16px]"
+                    onClick={() => console.log("Send via DM")}
+                  >
+                    <Send className="mr-2 h-4 w-4" /> Sao chép dưới hạng hình
+                    ảnh
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="font-medium text-[16px]"
+                    onClick={() => console.log("Send via DM")}
+                  >
+                    <Link className="mr-2 h-4 w-4" /> Lấy mã nhúng ảnh
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              // 3. Trường hợp Like, Repost (Nút thường)
+              ActionButton
+            )}
+
+            {item.count >= 0 && (
+              <span className="text-sm text-gray-600">{item.count}</span>
             )}
           </div>
         );

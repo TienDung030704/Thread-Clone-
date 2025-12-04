@@ -6,25 +6,7 @@ import {
   authReset,
   authVerify,
 } from "@/service/auth/authService";
-import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-// export const useAutoRegister = () => {
-//   const dispatch = useDispatch();
-//   // Return ve 1 funtion de componet goi khi can
-//   const autoRegister = useCallback(
-//     async (data) => {
-//       const action = await dispatch(authRegister(data));
-//       if (authRegister.fulfilled.match(action)) {
-//         return action.payload;
-//       }
-//       throw action.payload || action.error;
-//     },
-//     [dispatch]
-//   );
-//   return autoRegister;
-// };
-
-// };
 // Ham dispatch de dispatch toi API register
 export const useAutoRegister = () => {
   const dispatch = useDispatch();
@@ -34,7 +16,6 @@ export const useAutoRegister = () => {
   };
   return register;
 };
-
 // Ham dispatch de dispatch toi API login
 export const useAutoLogin = () => {
   const dispatch = useDispatch();

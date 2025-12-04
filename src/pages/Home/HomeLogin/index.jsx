@@ -43,23 +43,29 @@ import { useEffect, useState } from "react";
 import { useFetchProduct, useProductList } from "@/features/product/hook";
 import Modal from "@/components/Modal";
 import InfiniteScroll from "react-infinite-scroll-component";
-function HomeLogin() {
+import { useSavePost } from "@/features/Post/savePost/hook";
+import { useNavigate } from "react-router";
+import toast, { Toaster } from "react-hot-toast";
+function HomeLogin({ useSavePosts }) {
   const [list, setList] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const navigate = useNavigate();
   const autoProduct = useProductList();
   const autoFetch = useFetchProduct();
-
+  const autoSave = useSavePost(useSavePosts);
   // UseEffect render ra dữ liệu bài post
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
         const result = await autoProduct();
-        if (result) {
-          console.log(result);
+        if (result && result.length > 0) {
           setList(result);
+          setHasMore(true);
+        } else {
+          setHasMore(false);
         }
       } catch (error) {
         setList([]);
@@ -73,18 +79,35 @@ function HomeLogin() {
 
   // Fetch thêm data cho infinite scroll
   const fetchMoreData = async () => {
-    const result = await autoFetch(page);
-    console.log(result);
-    return result;
+    try {
+      const result = await autoFetch(page);
+      if (result && result.length > 0) {
+        setList((prevList) => [...prevList, ...result]);
+        setPage((prevPage) => prevPage + 1);
+      } else {
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.log(error);
+      setHasMore(false);
+    }
   };
-
+  // ham bam luu bai viet
+  const handleSaveClick = async (postId) => {
+    try {
+      const result = await autoSave(postId);
+      
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div>
       {/* Đã đăng nhập template */}
       <div className="login">
         <Header>
           <div className="flex items-center gap-2">
-            <h1>Dành cho bạn</h1>
+            Dành cho bạn
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors">
@@ -143,25 +166,25 @@ function HomeLogin() {
                 </p>
               }
             >
-              <ul className="flex flex-col justify-center items-center">
-                {/* Có gì mới  */}
-                <div className="w-full border-b border-gray-200 p-4 bg-white">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
-                    <Modal>
-                      <input
-                        type="text"
-                        placeholder="Có gì mới?"
-                        className="flex-1 bg-transparent text-gray-500 placeholder-gray-400 outline-none"
-                      />
-                    </Modal>
-                    <Modal>
-                      <Button className="px-4 py-2 bg-gray-100 hover:bg-black text-gray-700 hover:text-white text-sm rounded-lg ml-70 transition-colors">
-                        Đăng
-                      </Button>
-                    </Modal>
-                  </div>
+              {/* Có gì mới  */}
+              <div className="w-full border-b border-gray-200 p-4 bg-white">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
+                  <Modal>
+                    <input
+                      type="text"
+                      placeholder="Có gì mới?"
+                      className="flex-1 bg-transparent text-gray-500 placeholder-gray-400 outline-none"
+                    />
+                  </Modal>
+                  <Modal>
+                    <Button className="px-4 py-2 bg-gray-100 hover:bg-black text-gray-700 hover:text-white text-sm rounded-lg ml-70 transition-colors">
+                      Đăng
+                    </Button>
+                  </Modal>
                 </div>
+              </div>
+              <ul className="flex flex-col justify-center items-center">
                 {list.map((item) => (
                   <li
                     className="w-full h-full px-3 py-6 border-t border-b"
@@ -220,8 +243,12 @@ function HomeLogin() {
                                 </DropdownMenuGroup>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuGroup>
-                                  <DropdownMenuItem className="text-[15px] font-medium text-black p-2">
-                                    Lưu
+                                  <DropdownMenuItem
+                                    onClick={() => handleSaveClick(item.id)}
+                                    className="text-[15px] font-medium text-black p-2"
+                                  >
+                                    {item.is_saved_by_auth ? "Đã lưu" : "Lưu"}
+
                                     <DropdownMenuShortcut>
                                       <Bookmark />
                                     </DropdownMenuShortcut>
@@ -286,6 +313,10 @@ function HomeLogin() {
                         shares={item.shares}
                         reposts={item.reposts_and_quotes_count}
                         postId={item.id}
+                        userHasLiked={item.is_liked_by_auth}
+                        userHasRepost={item.is_reposted_by_auth}
+                        post={item}
+                        contentCommentUser={item}
                       />
                     </div>
                   </li>
@@ -295,7 +326,7 @@ function HomeLogin() {
           )}
         </PostCard>
       </div>
-
+      <Toaster />
       {/* Nút dấu cộng ở góc dưới bên phải */}
       <button className="fixed bottom-6 right-6 w-20 h-20 bg-white hover:bg-gray-50 text-black rounded-2xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 flex items-center justify-center z-50 border border-gray-200">
         <Plus className="w-7 h-7" />
