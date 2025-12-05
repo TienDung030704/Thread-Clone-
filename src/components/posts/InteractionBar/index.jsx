@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { useAutoRePost, useLikePost } from "@/features/Post/hook";
 import { useState } from "react";
 import ReplyModal from "@/components/posts/ReplyModal";
+import { CopyToClipboard } from "react-copy-to-clipboard";
+import toast from "react-hot-toast";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,7 +29,6 @@ function InteractionBar({
   const [repostCount, setRepostCount] = useState(reposts);
   const [isReposted, setIsReposted] = useState(userHasRepost);
   const autoRepost = useAutoRePost(postId);
-
   const handleLike = async (postId) => {
     try {
       if (!isLiked) {
@@ -60,6 +61,13 @@ function InteractionBar({
     }
   };
 
+  const handleCopy = () => {
+    toast.success("Đã copy link vào clipboard!", {
+      duration: 2000,
+      position: "bottom-center",
+    });
+  };
+  const postUrl = `${window.location.origin}/post/${postId}`;
   const Interactions = [
     {
       icon: Heart,
@@ -113,17 +121,17 @@ function InteractionBar({
               </ReplyModal>
             ) : item.key === "share" ? (
               // 2. Trường hợp Share (SỬA Ở ĐÂY)
-              <DropdownMenu>
+              <DropdownMenu modal={false}>
                 {/* asChild giúp Trigger nhận diện ActionButton là phần tử kích hoạt */}
                 <DropdownMenuTrigger>{ActionButton}</DropdownMenuTrigger>
 
                 <DropdownMenuContent align="start">
-                  <DropdownMenuItem
-                    className="font-medium text-[16px]"
-                    onClick={() => console.log("Copy Link")}
-                  >
-                    <Link className="mr-2 h-4 w-4 " /> Sao chép liên kết
-                  </DropdownMenuItem>
+                  <CopyToClipboard text={postUrl} onCopy={handleCopy}>
+                    <DropdownMenuItem className="font-medium text-[16px]">
+                      <Link className="mr-2 h-4 w-4 " />
+                      Sao chép liên kết
+                    </DropdownMenuItem>
+                  </CopyToClipboard>
                   <DropdownMenuItem
                     className="font-medium text-[16px]"
                     onClick={() => console.log("Send via DM")}

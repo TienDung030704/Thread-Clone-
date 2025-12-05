@@ -117,4 +117,22 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Đảm bảo scrollbar luôn hiển thị để tránh layout shift */
+  html {
+    overflow-y: scroll;
+    width: 100%;
+  }
+
+  /* Fix scroll lock và layout shift khi mở modal/dropdown */
+  body {
+    overflow-y: scroll !important;
+  }
+
+  body[data-scroll-locked] {
+    overflow-y: scroll !important;
+    padding-right: 0 !important;
+    margin-right: 0 !important;
+    width: 100% !important;
+  }
 }

@@ -151,7 +151,7 @@ function Sidebar({}) {
 
       {/* Menu */}
       <div className="cursor-pointer mb-5 relative">
-        <DropdownMenu>
+        <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
             <Button className="border-none" variant="outline">
               <Menu className="w-8 h-8 size-1" />

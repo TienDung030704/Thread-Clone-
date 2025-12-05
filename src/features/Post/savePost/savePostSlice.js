@@ -14,8 +14,11 @@ export const savePostSlice = createSlice({
       const result = state.list.find((item) => item.id === postToAdd.id);
       if (!result) {
         state.list.unshift(postToAdd);
+        state.isSavePost = true;
+      } else {
+        state.list.shift(postToAdd);
+        state.isSavePost = false;
       }
-      state.isSavePost = true;
     });
   },
 });

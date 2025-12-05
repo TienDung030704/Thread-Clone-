@@ -4,7 +4,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 // Hàm gọi API Like
 export const likeService = createAsyncThunk("like/likePost", async (postId) => {
   const response = await http.post(`posts/${postId}/like`, postId);
-  return response.postId;
+  return response.data;
 });
 // Hàm gọi API unLike
 export const unLikeService = createAsyncThunk(
@@ -29,7 +29,7 @@ export const saveService = createAsyncThunk(
   "save/saveService",
   async (postId) => {
     const reponse = await http.post(`posts/${postId}/save`, postId);
-    return reponse.postId;
+    return reponse.data;
   }
 );
 

@@ -96,8 +96,18 @@ function HomeLogin({ useSavePosts }) {
   const handleSaveClick = async (postId) => {
     try {
       const result = await autoSave(postId);
-      
+      const isSaved = postId.is_saved_by_auth;
+      if (result) {
+        if (isSaved) {
+          toast.success("Đã bỏ lưu bài viết ");
+          return result;
+        } else {
+          toast.success("Đã lưu bài viết thành công!");
+          return result;
+        }
+      }
     } catch (error) {
+      toast.error("Có lỗi khi lưu bài viết ");
       console.log(error);
     }
   };
@@ -108,7 +118,7 @@ function HomeLogin({ useSavePosts }) {
         <Header>
           <div className="flex items-center gap-2">
             Dành cho bạn
-            <DropdownMenu>
+            <DropdownMenu modal={false}>
               <DropdownMenuTrigger asChild>
                 <button className="w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors">
                   <ChevronDown className="w-4 h-4 text-gray-600" />
@@ -205,7 +215,7 @@ function HomeLogin({ useSavePosts }) {
                             {new Date(item.updated_at).toLocaleString("vi-VN")}
                           </span>
                           <button className="ml-auto relative">
-                            <DropdownMenu>
+                            <DropdownMenu modal={false}>
                               <DropdownMenuTrigger asChild>
                                 <Button
                                   className="border-none"
@@ -247,10 +257,16 @@ function HomeLogin({ useSavePosts }) {
                                     onClick={() => handleSaveClick(item.id)}
                                     className="text-[15px] font-medium text-black p-2"
                                   >
-                                    {item.is_saved_by_auth ? "Đã lưu" : "Lưu"}
+                                    {item.is_saved_by_auth ? "Bỏ lưu" : "Lưu"}
 
                                     <DropdownMenuShortcut>
-                                      <Bookmark />
+                                      <Bookmark
+                                        className={
+                                          item.is_saved_by_auth
+                                            ? " fill-red-600 text-red-600 "
+                                            : ""
+                                        }
+                                      />
                                     </DropdownMenuShortcut>
                                   </DropdownMenuItem>
                                   <DropdownMenuItem className="text-[15px] font-medium text-black p-2">

@@ -4,7 +4,7 @@ import { forgotSchema } from "@/util/validate";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAutoForgot } from "@/features/Auth";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router";
 
 function ForgotPassword() {
@@ -24,14 +24,13 @@ function ForgotPassword() {
     try {
       const result = await currentForgot(data);
       if (data.email) {
-        alert("chúng tôi đã gửi yêu cầu đặt lại mật khẩu tới email bạn");
+        toast.success("Đặt lại mật khẩu thành công!", {
+          duration: 2000,
+          position: "top-right",
+        });
         console.log(data);
         return result;
       }
-      toast.success("Đặt lại mật khẩu thành công!", {
-        duration: 2000,
-        position: "top-right",
-      });
       navigate("/auth/reset-password");
     } catch (error) {
       throw error;
