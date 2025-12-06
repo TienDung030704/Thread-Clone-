@@ -21,6 +21,7 @@ import {
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAutoLogout } from "@/features/Auth";
 import toast, { Toaster } from "react-hot-toast";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -32,7 +33,37 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  useCreatePost,
+  useGetCreatePost,
+} from "@/features/Post/createPost/hook";
 function Modal({ children }) {
+  const [content, setContent] = useState("");
+  const [topicName, setTopicName] = useState("");
+  const [replyPermission, setReplyPermission] = useState("everyone");
+  const [requiresApproval, setRequiresApproval] = useState(false);
+  const autoCreatePost = useCreatePost();
+  const currentSelector = useGetCreatePost();
+  const handleCreatePost = async (e) => {
+    e.preventDefault();
+    try {
+      const postData = {
+        content: content,
+        topic_name: topicName,
+        reply_permission: replyPermission,
+        requires_reply_approval: requiresApproval,
+      };
+      const result = await autoCreatePost(postData);
+
+      if (result) {
+        toast.success("Đã tạo bài viết thành công");
+        return result.postData;
+      }
+    } catch (error) {
+      toast.error("Có lỗi khi tạo bài viết");
+      console.log(error);
+    }
+  };
   return (
     <div>
       <Dialog>
@@ -68,9 +99,11 @@ function Modal({ children }) {
                 <div className="flex-1">
                   {/* USERNAME VÀ CHỦ ĐỀ */}
                   <div className="flex items-center mb-2">
-                    <span className="text-black font-medium">tiendungg_07</span>
+                    <span className="text-black font-medium">tiendung_007</span>
                     <ChevronRight className="mx-2 text-gray-400 w-4 h-4" />
                     <input
+                      value={topicName}
+                      onChange={(e) => setTopicName(e.target.value)}
                       className="border-none outline-none bg-transparent flex-1 text-gray-500 text-sm"
                       placeholder="Thêm chủ đề"
                     />
@@ -79,6 +112,8 @@ function Modal({ children }) {
                   {/* NỘI DUNG CHÍNH */}
                   <div className="mb-1">
                     <textarea
+                      value={content}
+                      onChange={(e) => setContent(e.target.value)}
                       className="border-none outline-none bg-transparent w-full resize-none text-gray-900 placeholder-gray-400 text-sm"
                       placeholder="Có gì mới?"
                       rows="1"
@@ -129,7 +164,9 @@ function Modal({ children }) {
                   Các lựa chọn để kiểm soát câu trả lời
                 </Button>
               </div>
-              <Button type="submit">Đăng</Button>
+              <Button onClick={handleCreatePost} type="submit">
+                Đăng
+              </Button>
             </DialogFooter>
           </DialogContent>
         </form>

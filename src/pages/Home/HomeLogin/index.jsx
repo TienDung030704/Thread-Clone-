@@ -46,7 +46,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { useSavePost } from "@/features/Post/savePost/hook";
 import { useNavigate } from "react-router";
 import toast, { Toaster } from "react-hot-toast";
-function HomeLogin({ useSavePosts }) {
+function HomeLogin() {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -54,7 +54,8 @@ function HomeLogin({ useSavePosts }) {
   const navigate = useNavigate();
   const autoProduct = useProductList();
   const autoFetch = useFetchProduct();
-  const autoSave = useSavePost(useSavePosts);
+  const autoSave = useSavePost();
+
   // UseEffect render ra dữ liệu bài post
   useEffect(() => {
     const fetchData = async () => {
@@ -96,13 +97,22 @@ function HomeLogin({ useSavePosts }) {
   const handleSaveClick = async (postId) => {
     try {
       const result = await autoSave(postId);
-      const isSaved = postId.is_saved_by_auth;
+      // Tìm bài post để check trạng thái hiện tại
+      const currentPost = list.find((item) => item.id === postId);
       if (result) {
-        if (isSaved) {
-          toast.success("Đã bỏ lưu bài viết ");
+        // Cập nhật state list để UI thay đổi ngay lập tức
+        setList((prevList) =>
+          prevList.map((item) =>
+            item.id === postId
+              ? { ...item, is_saved_by_auth: !item.is_saved_by_auth }
+              : item
+          )
+        );
+        if (!currentPost.is_saved_by_auth) {
+          toast.success("Đã lưu bài viết thành công!");
           return result;
         } else {
-          toast.success("Đã lưu bài viết thành công!");
+          toast.success("Đã bỏ lưu bài viết ");
           return result;
         }
       }
@@ -111,6 +121,7 @@ function HomeLogin({ useSavePosts }) {
       console.log(error);
     }
   };
+
   return (
     <div>
       {/* Đã đăng nhập template */}

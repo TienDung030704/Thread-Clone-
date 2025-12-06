@@ -120,23 +120,28 @@ function Sidebar({}) {
         {navigationItems.map((items) => {
           const Comp = items.content;
           return items.path ? (
-            <NavigationMenuItem className="px-9 mb-7" key={items.path}>
+            <NavigationMenuItem className="px-9 mb-3" key={items.path}>
               <NavigationMenuLink asChild>
                 <NavLink
                   className={
                     ({ isActive }) =>
                       isActive
-                        ? "bg-amber-500 p-3 rounded-xl" // ← Khi active
-                        : "p-3 hover:bg-gray-100 rounded-xl" // ← Khi không active
+                        ? "bg-black p-3 rounded-xl block" // ← Khi active
+                        : "p-3 hover:bg-gray-100 rounded-xl block" // ← Khi không active
                   }
                   to={items.path}
                 >
-                  <Comp className="size-3 w-7 h-7" />
+                  {({ isActive }) => (
+                    <Comp
+                      className="size-2 w-7 h-7"
+                      fill={isActive ? "currentColor" : "none"}
+                    />
+                  )}
                 </NavLink>
               </NavigationMenuLink>
             </NavigationMenuItem>
           ) : (
-            <NavigationMenuItem className="m-8" key={items.content}>
+            <NavigationMenuItem className="m-6" key={items.content}>
               <NavigationMenuLink asChild className="bg-transparent">
                 <Modal>
                   <UIButton className="cursor-pointer w-4 bg-transparent border-none hover:bg-gray-100">
