@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 
-function ReplyModal({ children, postSingle, postCommentUser }) {
+function ReplyModal({ children, postSingle, postCommentUser, userName }) {
   const [posts, setPosts] = useState([]);
   const autoProduct = useProductList();
 
@@ -88,7 +88,9 @@ function ReplyModal({ children, postSingle, postCommentUser }) {
                 <div className="flex-1">
                   {/* username */}
                   <div className="flex items-center mb-2">
-                    <span className="text-black font-medium">tiendungg_07</span>
+                    <span className="text-black font-medium">
+                      {userName?.username}
+                    </span>
                     <ChevronRight className="mx-2 text-gray-400 w-4 h-4" />
                     <input
                       className="border-none outline-none bg-transparent flex-1 text-gray-500 text-sm"

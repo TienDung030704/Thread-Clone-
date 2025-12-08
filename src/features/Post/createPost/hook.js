@@ -10,8 +10,6 @@ export const useCreatePost = () => {
   return createPost;
 };
 export const useGetCreatePost = () => {
-  const currentCreatePost = useSelector(
-    (state) => state.list.currentCreatePost
-  );
+  const currentCreatePost = useSelector((state) => state.auth?.userInfo);
   return currentCreatePost;
 };

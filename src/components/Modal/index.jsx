@@ -33,17 +33,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  useCreatePost,
-  useGetCreatePost,
-} from "@/features/Post/createPost/hook";
-function Modal({ children }) {
+import { useCreatePost } from "@/features/Post/createPost/hook";
+function Modal({ children, userAuth }) {
   const [content, setContent] = useState("");
   const [topicName, setTopicName] = useState("");
   const [replyPermission, setReplyPermission] = useState("everyone");
   const [requiresApproval, setRequiresApproval] = useState(false);
   const autoCreatePost = useCreatePost();
-  const currentSelector = useGetCreatePost();
   const handleCreatePost = async (e) => {
     e.preventDefault();
     try {
@@ -99,7 +95,9 @@ function Modal({ children }) {
                 <div className="flex-1">
                   {/* USERNAME VÀ CHỦ ĐỀ */}
                   <div className="flex items-center mb-2">
-                    <span className="text-black font-medium">tiendung_007</span>
+                    <span className="text-black font-medium">
+                      {userAuth?.username || "guest"}
+                    </span>
                     <ChevronRight className="mx-2 text-gray-400 w-4 h-4" />
                     <input
                       value={topicName}

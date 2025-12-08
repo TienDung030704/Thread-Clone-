@@ -46,6 +46,8 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { useSavePost } from "@/features/Post/savePost/hook";
 import { useNavigate } from "react-router";
 import toast, { Toaster } from "react-hot-toast";
+import { useGetCurrentUser } from "@/features/Auth";
+
 function HomeLogin() {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -55,7 +57,7 @@ function HomeLogin() {
   const autoProduct = useProductList();
   const autoFetch = useFetchProduct();
   const autoSave = useSavePost();
-
+  const currentUser = useGetCurrentUser();
   // UseEffect render ra dữ liệu bài post
   useEffect(() => {
     const fetchData = async () => {
@@ -191,14 +193,14 @@ function HomeLogin() {
               <div className="w-full border-b border-gray-200 p-4 bg-white">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
-                  <Modal>
+                  <Modal userAuth={currentUser}>
                     <input
                       type="text"
                       placeholder="Có gì mới?"
                       className="flex-1 bg-transparent text-gray-500 placeholder-gray-400 outline-none"
                     />
                   </Modal>
-                  <Modal>
+                  <Modal userAuth={currentUser}>
                     <Button className="px-4 py-2 bg-gray-100 hover:bg-black text-gray-700 hover:text-white text-sm rounded-lg ml-70 transition-colors">
                       Đăng
                     </Button>
@@ -344,6 +346,7 @@ function HomeLogin() {
                         userHasRepost={item.is_reposted_by_auth}
                         post={item}
                         contentCommentUser={item}
+                        userAuthName={currentUser}
                       />
                     </div>
                   </li>

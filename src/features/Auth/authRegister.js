@@ -7,7 +7,7 @@ const initialState = {
   error: null,
   userToken: null,
 };
-export const authSlice = createSlice({
+export const authRegisterSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {},
@@ -29,5 +29,5 @@ export const authSlice = createSlice({
       });
   },
 });
-export const { reducerPath } = authSlice;
-export default authSlice.reducer;
+export const { reducerPath } = authRegisterSlice;
+export default authRegisterSlice.reducer;

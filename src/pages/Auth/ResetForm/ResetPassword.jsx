@@ -1,7 +1,11 @@
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useAutoRegister } from "@/features/Auth";
 import { resetSchema } from "@/util/validate";
-import { useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useForm } from "react-hook-form";
+import { Toaster } from "react-hot-toast";
+import { useNavigate } from "react-router";
 
 function ResetPassword() {
   const {
@@ -17,25 +21,14 @@ function ResetPassword() {
     resolver: yupResolver(resetSchema),
   });
 
-  const [searchParam, setSearchParam] = useSearchParams();
-  useEffect(() => {
-    const tokenparams = searchParam.get(`?token=${token}`);
-    if (tokenparams) {
-      setSearchParam();
-      navigate("/login", {
-        state: {
-          message: "Tạo mật khẩu mới thành công, vui lòng đăng nhập",
-        },
-      });
-    }
-  }, []);
   const navigate = useNavigate();
   const resetPass = useAutoRegister();
+
   const onSubmit = async (data) => {
     try {
       const token = localStorage.getItem("access_token", access_token);
       const result = await resetPass(data);
-      if (data.token) {
+      if (result) {
         console.log("thanh cong ");
         return token;
       }

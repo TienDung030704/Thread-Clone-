@@ -65,8 +65,11 @@ export const useAutoResetPassword = () => {
   return resetpassword;
 };
 
-// Hàm selector state hiện tại
 export const useGetCurrentUser = () => {
-  const currentUser = useSelector((state) => state.auth.currentUser);
+  const currentUser = useSelector((state) => state.auth?.userInfo);
+  const localStorageUser = localStorage.getItem("user_data");
+  if (localStorageUser) {
+    return JSON.parse(localStorageUser);
+  }
   return currentUser;
 };
