@@ -7,6 +7,8 @@ import { fetchSlice } from "@/features/product/fetchSlice";
 import { repostSlice } from "@/features/Post/repostSlice";
 import { savePostSlice } from "@/features/Post/savePost/savePostSlice";
 import { authLoginSlice } from "@/features/Auth/authLogin";
+import { createReplySlice } from "@/features/Post/createReply/createReply";
+import { postDetailSlice } from "@/features/Post/postDetail/postDetail";
 
 export const store = configureStore({
   reducer: {
@@ -18,6 +20,8 @@ export const store = configureStore({
     [fetchSlice.reducerPath]: fetchSlice.reducer,
     [repostSlice.reducerPath]: repostSlice.reducer,
     [savePostSlice.reducerPath]: savePostSlice.reducer,
+    [createReplySlice.reducerPath]: savePostSlice.reducer,
+    [postDetailSlice.reducerPath]: savePostSlice.reducer,
   },
 });
 window.store = store;

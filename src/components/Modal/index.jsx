@@ -40,6 +40,7 @@ function Modal({ children, userAuth }) {
   const [replyPermission, setReplyPermission] = useState("everyone");
   const [requiresApproval, setRequiresApproval] = useState(false);
   const autoCreatePost = useCreatePost();
+  // 
   const handleCreatePost = async (e) => {
     e.preventDefault();
     try {

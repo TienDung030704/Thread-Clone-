@@ -8,7 +8,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useProductList } from "@/features/product/hook";
+import { useCreateReply } from "@/features/Post/createReply/hook";
+import toast, { Toaster } from "react-hot-toast";
 import { Button } from "@radix-ui/themes";
 import {
   ChevronRight,
@@ -20,26 +21,34 @@ import {
   ArrowUpDown,
   EllipsisIcon,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-function ReplyModal({ children, postSingle, postCommentUser, userName }) {
-  const [posts, setPosts] = useState([]);
-  const autoProduct = useProductList();
+function ReplyModal({
+  children,
+  postSingle,
+  postCommentUser,
+  userName,
+  postReply,
+}) {
+  const [content, setContent] = useState("");
+  const [replyPermission, setReplyPermission] = useState("everyone");
+  const autoCreateReply = useCreateReply();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const result = await autoProduct();
-        if (result && result.length > 0) {
-          setPosts(result);
-        }
-      } catch (error) {
-        console.log(error);
+  const handleCreateReply = async (postId) => {
+    try {
+      const replyData = {
+        content: content,
+        reply_permission: replyPermission,
+      };
+      const result = await autoCreateReply({ postId, replyData });
+      if (result) {
+        toast.success("Đã tạo bình luận thành công");
+        return result;
       }
-    };
-    fetchData();
-  }, []);
-
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div>
       <Dialog>
@@ -101,6 +110,8 @@ function ReplyModal({ children, postSingle, postCommentUser, userName }) {
                   {/* NỘI DUNG NHẬP */}
                   <div className="mb-1">
                     <textarea
+                      value={content}
+                      onChange={(e) => setContent(e.target.value)}
                       className="border-none outline-none bg-transparent w-full resize-none text-gray-900 placeholder-gray-400 text-sm"
                       placeholder={`Trả lời ${postCommentUser?.user?.username}`}
                       rows="1"
@@ -150,7 +161,12 @@ function ReplyModal({ children, postSingle, postCommentUser, userName }) {
                   Các lựa chọn để kiểm soát câu trả lời
                 </Button>
               </div>
-              <Button type="submit">Đăng</Button>
+              <Button
+                onClick={() => handleCreateReply(postReply?.id)}
+                type="submit"
+              >
+                Đăng
+              </Button>
             </DialogFooter>
           </DialogContent>
         </form>

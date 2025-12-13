@@ -12,6 +12,7 @@ import Search from "@/pages/Search";
 import HeartPage from "@/pages/Heart";
 import Individual from "@/pages/Individual";
 import SavePage from "@/pages/SavePage";
+import PostDetails from "@/pages/postDetail";
 
 function AppRoutes() {
   return (
@@ -22,6 +23,7 @@ function AppRoutes() {
         <Route path="/heart" element={<HeartPage />}></Route>
         <Route path="/individual" element={<Individual />}></Route>
         <Route path="/save" element={<SavePage />}></Route>
+        <Route path="/posts/:postId" element={<PostDetails />} />
       </Route>
       <Route element={<AuthLayout />}>
         <Route path="/auth/login" element={<Login />} />

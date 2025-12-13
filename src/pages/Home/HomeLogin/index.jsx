@@ -44,10 +44,10 @@ import { useFetchProduct, useProductList } from "@/features/product/hook";
 import Modal from "@/components/Modal";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useSavePost } from "@/features/Post/savePost/hook";
-import { useNavigate } from "react-router";
 import toast, { Toaster } from "react-hot-toast";
 import { useGetCurrentUser } from "@/features/Auth";
-
+import { useAutoPostDetail } from "@/features/Post/postDetail/hook";
+import { useNavigate } from "react-router-dom";
 function HomeLogin() {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -58,6 +58,7 @@ function HomeLogin() {
   const autoFetch = useFetchProduct();
   const autoSave = useSavePost();
   const currentUser = useGetCurrentUser();
+  const currentPostDetail = useAutoPostDetail();
   // UseEffect render ra dữ liệu bài post
   useEffect(() => {
     const fetchData = async () => {
@@ -123,7 +124,18 @@ function HomeLogin() {
       console.log(error);
     }
   };
-
+  // ham bấm vào chi tiết từng bài post
+  const handleCurrentPostDetail = async (postId) => {
+    try {
+      const result = await currentPostDetail(postId);
+      navigate(`/posts/${postId}`);
+      if (result) {
+        return result;
+      }
+    } catch (error) {
+      toast.error("Có lỗi khi bấm vào bài viết chi tiết");
+    }
+  };
   return (
     <div>
       {/* Đã đăng nhập template */}
@@ -192,7 +204,11 @@ function HomeLogin() {
               {/* Có gì mới  */}
               <div className="w-full border-b border-gray-200 p-4 bg-white">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
+                  <img
+                    className="w-9 h-9 object-cover rounded-lg"
+                    src="avatarcanhan.jpg"
+                    alt=""
+                  />
                   <Modal userAuth={currentUser}>
                     <input
                       type="text"
@@ -210,7 +226,8 @@ function HomeLogin() {
               <ul className="flex flex-col justify-center items-center">
                 {list.map((item) => (
                   <li
-                    className="w-full h-full px-3 py-6 border-t border-b"
+                    onClick={() => handleCurrentPostDetail(item.id)}
+                    className="w-full h-full px-3 py-6 border-t border-b cursor-pointer"
                     key={item.id}
                   >
                     <div className="flex justify-center items-center gap-2.5">
@@ -347,6 +364,8 @@ function HomeLogin() {
                         post={item}
                         contentCommentUser={item}
                         userAuthName={currentUser}
+                        postReply={item}
+                        postDetail={item}
                       />
                     </div>
                   </li>

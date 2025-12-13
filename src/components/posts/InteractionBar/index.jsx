@@ -23,6 +23,7 @@ function InteractionBar({
   post,
   contentCommentUser,
   userAuthName,
+  postReply,
 }) {
   const autoLike = useLikePost();
   const [likeCount, setlikeCount] = useState(likes);
@@ -118,6 +119,7 @@ function InteractionBar({
                 postSingle={post}
                 postCommentUser={contentCommentUser}
                 userName={userAuthName}
+                postReply={postReply}
               >
                 {ActionButton}
               </ReplyModal>
