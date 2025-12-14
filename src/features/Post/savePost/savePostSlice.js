@@ -1,4 +1,4 @@
-import { saveService } from "@/service/post/postService";
+import { saveService } from "@/service/saveServices/saveService";
 import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   list: [],

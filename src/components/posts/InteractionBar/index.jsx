@@ -1,6 +1,7 @@
 import { Heart, MessageCircle, Share, Repeat2, Link, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useAutoRePost, useLikePost } from "@/features/Post/hook";
+import { useLikePost } from "@/features/Post/likeSlice/hook";
+import { useAutoRePost } from "@/features/Post/repostSlice/hook";
 import { useState } from "react";
 import ReplyModal from "@/components/posts/ReplyModal";
 import { CopyToClipboard } from "react-copy-to-clipboard";

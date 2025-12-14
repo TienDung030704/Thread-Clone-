@@ -226,11 +226,13 @@ function HomeLogin() {
               <ul className="flex flex-col justify-center items-center">
                 {list.map((item) => (
                   <li
-                    onClick={() => handleCurrentPostDetail(item.id)}
-                    className="w-full h-full px-3 py-6 border-t border-b cursor-pointer"
+                    className="w-full h-full px-3 py-6 border-t border-b"
                     key={item.id}
                   >
-                    <div className="flex justify-center items-center gap-2.5">
+                    <div
+                      onClick={() => handleCurrentPostDetail(item.id)}
+                      className="flex justify-center items-center gap-2.5 cursor-pointer"
+                    >
                       <img
                         className="w-8 h-8 rounded-full"
                         src={item.user.avatar_url}
@@ -244,7 +246,10 @@ function HomeLogin() {
                           <span className="ml-1.5 text-gray-500">
                             {new Date(item.updated_at).toLocaleString("vi-VN")}
                           </span>
-                          <button className="ml-auto relative">
+                          <button
+                            onClick={(e) => e.stopPropagation()}
+                            className="ml-auto relative"
+                          >
                             <DropdownMenu modal={false}>
                               <DropdownMenuTrigger asChild>
                                 <Button
@@ -345,14 +350,20 @@ function HomeLogin() {
                         <span className="">{item.content}</span>
                       </div>
                     </div>
-                    <div>
+                    <div
+                      onClick={() => handleCurrentPostDetail(item.id)}
+                      className="cursor-pointer"
+                    >
                       <img
                         className="max-h-96 w-auto object-cover rounded-md mt-2 ml-10"
                         src={item.image}
                         alt=""
                       />
                     </div>
-                    <div className="ml-5 pt-2">
+                    <div
+                      onClick={(e) => e.stopPropagation()}
+                      className="ml-5 pt-2"
+                    >
                       <InteractionBar
                         likes={item.likes_count}
                         comments={item.replies_count}

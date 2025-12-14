@@ -88,7 +88,7 @@ function ReplyModal({
               <div className="flex items-start gap-3">
                 {/* AVATAR BÊN TRÁI */}
                 <img
-                  className="w-10 h-10 rounded-full object-cover flex-shrink-0 border-y"
+                  className="w-10 h-10 rounded-full object-cover  border-y"
                   src="avatarcanhan.jpg"
                   alt="Avatar"
                 />

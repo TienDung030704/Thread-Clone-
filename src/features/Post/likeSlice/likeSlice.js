@@ -1,4 +1,4 @@
-import { likeService } from "@/service/post/postService";
+import { likeService } from "@/service/likeServices/likeServices";
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
@@ -6,7 +6,7 @@ const initialState = {
   isLiked: false,
 };
 
-export const postSlice = createSlice({
+export const likeSlice = createSlice({
   name: "post",
   initialState,
   reducers: {},
@@ -22,5 +22,5 @@ export const postSlice = createSlice({
   },
 });
 
-export const { reducerPath } = postSlice;
-export default postSlice.reducer;
+export const { reducerPath } = likeSlice;
+export default likeSlice.reducer;

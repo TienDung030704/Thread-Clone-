@@ -2,6 +2,7 @@ import { repostService } from "@/service/repostServices/repostServices";
 import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   list: [],
+  isRePosted: false,
 };
 export const repostSlice = createSlice({
   name: "repost",
@@ -11,7 +12,8 @@ export const repostSlice = createSlice({
     builder.addCase(repostService.fulfilled, (state, action) => {
       state.list.forEach((post) => {
         if (post.id === action.payload.postId) {
-          post.replies_count++;
+          post.reposts_and_quotes_count++;
+          state.isRePosted = true;
         }
       });
     });

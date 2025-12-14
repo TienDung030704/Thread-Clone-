@@ -8,6 +8,7 @@ import {
 } from "@/features/Post/postDetail/hook";
 import {
   AlertCircle,
+  ArrowLeft,
   BadgePlus,
   Ellipsis,
   LinkIcon,
@@ -83,13 +84,15 @@ function PostDetails() {
     <div>
       <div>
         <div className="flex justify-center items-center ">
-          <Button
-            className="border-none p-2 h-auto mr-[-6px]"
-            variant="outline"
-          >
-            <Ellipsis className="cursor-pointer w-5 h-5" />
-          </Button>
-          <div>
+          <div className="">
+            <Button
+              className="border-none p-2 h-auto mr-[-6px]"
+              variant="outline"
+            >
+              <ArrowLeft className="cursor-pointer w-5 h-5" />
+            </Button>
+          </div>
+          <div className="">
             <Header>Thread</Header>
           </div>
         </div>
@@ -199,7 +202,15 @@ function PostDetails() {
                     {currentPost?.content}
                   </p>
                 </div>
-                <InteractionBar />
+                <InteractionBar
+                  likes={currentPost?.likes_count}
+                  comments={currentPost?.replies_count}
+                  shares={currentPost?.shares_count}
+                  reposts={currentPost?.reposts_and_quotes_count}
+                  postId={currentPost?.id}
+                  userHasLiked={currentPost?.is_liked_by_auth}
+                  userHasRepost={currentPost?.is_reposted_by_auth}
+                />
                 <div className="mt-4 pt-4 border-t border-gray-200">
                   <div className="flex items-center justify-between text-sm text-gray-500 pb-4 border-b border-gray-200">
                     <div className="flex items-center gap-1">
@@ -343,7 +354,15 @@ function PostDetails() {
                             <p className="text-black text-sm leading-relaxed">
                               {comment?.content}
                             </p>
-                            <InteractionBar />
+                            <InteractionBar
+                              likes={comment?.likes_count}
+                              comments={comment?.replies_count}
+                              shares={comment?.shares_count}
+                              reposts={comment?.reposts_and_quotes_count}
+                              postId={comment?.id}
+                              userHasLiked={comment?.is_liked_by_auth}
+                              userHasRepost={comment?.is_reposted_by_auth}
+                            />
                           </div>
                         </div>
                       </li>

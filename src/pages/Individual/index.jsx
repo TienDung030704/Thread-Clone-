@@ -126,7 +126,7 @@ function Individual() {
                   <div className="flex gap-4 overflow-x-auto pb-4">
                     {/* Thêm tiểu sử */}
                     <div
-                      className="bg-white border border-gray-200 text-black rounded-2xl p-6 flex-shrink-0"
+                      className="bg-white border border-gray-200 text-black rounded-2xl p-6 "
                       style={{ width: "194px", height: "230px" }}
                     >
                       <div className="flex flex-col items-center text-center">

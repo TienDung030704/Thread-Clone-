@@ -2,9 +2,9 @@ import { configureStore } from "@reduxjs/toolkit";
 import { authRegisterSlice } from "@/features/Auth";
 import { productSlice } from "@/features/product/productSlice";
 import { searchSlice } from "@/features/SearchFollow/searchSlice";
-import { postSlice } from "@/features/Post/postSlice";
+import { likeSlice } from "@/features/Post/likeSlice/likeSlice";
 import { fetchSlice } from "@/features/product/fetchSlice";
-import { repostSlice } from "@/features/Post/repostSlice";
+import { repostSlice } from "@/features/Post/repostSlice/repostSlice";
 import { savePostSlice } from "@/features/Post/savePost/savePostSlice";
 import { authLoginSlice } from "@/features/Auth/authLogin";
 import { createReplySlice } from "@/features/Post/createReply/createReply";
@@ -17,7 +17,7 @@ export const store = configureStore({
     [authLoginSlice.reducerPath]: authLoginSlice.reducer,
     [productSlice.reducerPath]: productSlice.reducer,
     [searchSlice.reducerPath]: searchSlice.reducer,
-    [postSlice.reducerPath]: postSlice.reducer,
+    [likeSlice.reducerPath]: likeSlice.reducer,
     [fetchSlice.reducerPath]: fetchSlice.reducer,
     [repostSlice.reducerPath]: repostSlice.reducer,
     [savePostSlice.reducerPath]: savePostSlice.reducer,
