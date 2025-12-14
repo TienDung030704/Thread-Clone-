@@ -22,7 +22,8 @@ export const useFetchProduct = () => {
 };
 
 export const useGetCurrentProduct = () => {
-  const currentProduct = useSelector((state) => state.list.currentProduct);
+  const currentProduct = useSelector((state) => state.post.currentProduct);
+  console.log(currentProduct);
   return currentProduct;
 };
 export const useGetCurrentFetch = () => {

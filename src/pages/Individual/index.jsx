@@ -13,9 +13,10 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import ModalIndividual from "../Home/ModalIndividual";
+import { useGetCurrentUser } from "@/features/Auth";
 
 function Individual() {
-  const currentInformation = useGetCurrentInformation();
+  const currentInformation = useGetCurrentUser();
   const [activeTab, setActiveTab] = useState("Thread");
 
   const tabs = ["Thread", "Thread trả lời", "File phương tiện", "Bài đăng lại"];

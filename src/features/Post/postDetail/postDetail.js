@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   list: [],
   loading: false,
+  currentProduct: null,
 };
 export const postDetailSlice = createSlice({
   name: "post",
@@ -11,6 +12,7 @@ export const postDetailSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(postDetailService.fulfilled, (state, action) => {
       state.list = action.payload;
+      state.currentProduct = action.payload;
       state.loading = true;
     });
   },
