@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   list: [],
   isFollowUser: false,
+  currentFollowUser: null,
 };
 export const followUserSlice = createSlice({
   name: "follow",
@@ -11,6 +12,7 @@ export const followUserSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(followUserService.fulfilled, (state, action) => {
       state.list = action.payload;
+      state.currentFollowUser = action.payload;
       state.isFollowUser = true;
     });
   },

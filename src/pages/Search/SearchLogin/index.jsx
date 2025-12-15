@@ -21,11 +21,13 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
+import { useFollowUser } from "@/features/Post/FollowUser/hook";
+import toast, { Toaster } from "react-hot-toast";
 function SearchLogin() {
   const [list, setList] = useState([]);
   const autoSearch = useAutoSearch();
   const [loading, setLoading] = useState(false);
+  const currentFollowUsers = useFollowUser();
   useEffect(() => {
     setLoading(true);
     const fetchData = async () => {
@@ -43,6 +45,32 @@ function SearchLogin() {
     };
     fetchData();
   }, []);
+
+  const handleFollowUser = async (userId) => {
+    try {
+      const currentUser = list.find((user) => user.id === userId);
+      const result = currentFollowUsers(userId);
+      console.log(result);
+      if (result) {
+        setList((prevList) =>
+          prevList.map((user) =>
+            user.id === userId
+              ? { ...user, is_followed_by: !user.is_followed_by }
+              : user
+          )
+        );
+        if (!currentUser.is_followed_by) {
+          toast.success("Đã theo dõi thành công");
+          return result;
+        } else {
+          toast.success("Đã bỏ theo dõi người dùng ");
+          return result;
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div>
       <Header>
@@ -121,12 +149,18 @@ function SearchLogin() {
                       <span className="text-gray-400">{item.username}</span>
                     </div>
                   </article>
-                  <Button className="ml-auto">Theo dõi</Button>
+                  <Button
+                    onClick={() => handleFollowUser(item.id)}
+                    className="ml-auto"
+                  >
+                    {item.is_followed_by ? "Bỏ theo dõi" : "Theo dõi"}
+                  </Button>
                 </div>
               </li>
             ))}
           </ul>
         )}
+        <Toaster />
       </PostCard>
     </div>
   );

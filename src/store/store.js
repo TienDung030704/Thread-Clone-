@@ -10,6 +10,9 @@ import { authLoginSlice } from "@/features/Auth/authLogin";
 import { createReplySlice } from "@/features/Post/createReply/createReply";
 import { postDetailSlice } from "@/features/Post/postDetail/postDetail";
 import { replyCommentSlice } from "@/features/Post/getCommentReply/getCommentReply";
+import { followUserSlice } from "@/features/Post/FollowUser/followUserSlice";
+import { unFollowUserSlice } from "@/features/Post/UnFollowUser/followUserSlice";
+import { authUserSlice } from "@/features/Auth/authUser/authUser";
 
 export const store = configureStore({
   reducer: {
@@ -24,6 +27,9 @@ export const store = configureStore({
     [createReplySlice.reducerPath]: createReplySlice.reducer,
     [postDetailSlice.reducerPath]: postDetailSlice.reducer,
     [replyCommentSlice.reducerPath]: replyCommentSlice.reducer,
+    [followUserSlice.reducerPath]: followUserSlice.reducer,
+    [unFollowUserSlice.reducerPath]: unFollowUserSlice.reducer,
+    [authUserSlice.reducerPath]: authUserSlice.reducer,
   },
 });
 window.store = store;

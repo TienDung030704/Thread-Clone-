@@ -44,6 +44,8 @@ import {
 } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAutoLogout } from "@/features/Auth";
+import { logoutUser } from "@/features/Auth/authUser/authUser";
+import { useDispatch } from "react-redux";
 import toast, { Toaster } from "react-hot-toast";
 import { Button as UIButton } from "@/components/ui/button";
 
@@ -73,28 +75,30 @@ const navigationItems = [
 function Sidebar({}) {
   // Hàm bấm nút logic đăng xuất
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const userLogOut = useAutoLogout();
-  const handleLogOut = async (data) => {
+
+  const handleLogOut = async () => {
     try {
-      const resultLogOut = await userLogOut(data);
-      const access_token = localStorage.getItem("access_token");
-      const refresh_token = localStorage.getItem("refresh_token");
-      const user_data = localStorage.getItem("user_data");
-      if (access_token && refresh_token) {
-        localStorage.removeItem("access_token", access_token);
-        localStorage.removeItem("refresh_token", refresh_token);
-      }
-      if (user_data) {
-        localStorage.removeItem("user_data", JSON.stringify(user_data));
-      }
+      // 1. Gọi API logout
+      await userLogOut();
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
+      localStorage.removeItem("user_data");
+      // 3. Clear Redux state
+      dispatch(logoutUser());
+
+      // 4. Thông báo và chuyển trang
       toast.success("Đăng xuất thành công!", {
         duration: 2000,
         position: "top-right",
       });
       navigate("/auth/login");
-      resultLogOut(data);
     } catch (error) {
-      throw error;
+      toast.error("Đăng xuất thất bại!", {
+        duration: 2000,
+        position: "top-right",
+      });
     }
   };
   return (

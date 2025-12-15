@@ -34,6 +34,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useAutoReplyComment } from "@/features/Post/getCommentReply/hook";
+import { useGetCurrentUser } from "@/features/Auth";
 function PostDetails() {
   const [post, setPost] = useState({});
   const [replyComment, setreplyComment] = useState([]);
@@ -44,6 +45,7 @@ function PostDetails() {
   const autoProduct = useAutoPostDetail();
   const currentPost = useGetCurrentInformation();
   const postId = param.postId;
+  const currentUser = useGetCurrentUser();
 
   // UseEffect render ra dữ liệu bài post
   useEffect(() => {
@@ -85,10 +87,7 @@ function PostDetails() {
       <div>
         <div className="flex justify-center items-center ">
           <div className="">
-            <Button
-              className="border-none p-2 h-auto mr-[-6px]"
-              variant="outline"
-            >
+            <Button className="border-none p-2 h-auto " variant="outline">
               <ArrowLeft className="cursor-pointer w-5 h-5" />
             </Button>
           </div>
@@ -207,6 +206,11 @@ function PostDetails() {
                   comments={currentPost?.replies_count}
                   shares={currentPost?.shares_count}
                   reposts={currentPost?.reposts_and_quotes_count}
+                  post={currentPost}
+                  contentCommentUser={currentPost}
+                  userAuthName={currentUser}
+                  postReply={currentPost}
+                  postDetail={currentPost}
                   postId={currentPost?.id}
                   userHasLiked={currentPost?.is_liked_by_auth}
                   userHasRepost={currentPost?.is_reposted_by_auth}

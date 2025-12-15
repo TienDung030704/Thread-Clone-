@@ -45,9 +45,9 @@ import Modal from "@/components/Modal";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useSavePost } from "@/features/Post/savePost/hook";
 import toast, { Toaster } from "react-hot-toast";
-import { useGetCurrentUser } from "@/features/Auth";
 import { useAutoPostDetail } from "@/features/Post/postDetail/hook";
 import { useNavigate } from "react-router-dom";
+import { useCurrentUser } from "@/features/Auth/authUser/hook";
 function HomeLogin() {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -57,7 +57,7 @@ function HomeLogin() {
   const autoProduct = useProductList();
   const autoFetch = useFetchProduct();
   const autoSave = useSavePost();
-  const currentUser = useGetCurrentUser();
+  const currentUser = useCurrentUser();
   const currentPostDetail = useAutoPostDetail();
   // UseEffect render ra dữ liệu bài post
   useEffect(() => {

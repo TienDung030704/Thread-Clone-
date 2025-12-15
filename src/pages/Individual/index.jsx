@@ -3,7 +3,6 @@ import PostCard from "@/components/posts/PostCard";
 import Sidebar from "@/components/Sidebar/Sidebar";
 import Modal from "@/components/Modal";
 import { Button } from "@/components/ui/button";
-import { useGetCurrentInformation } from "@/features/Post/postDetail/hook";
 import {
   BarChart3,
   Camera,
@@ -14,11 +13,12 @@ import {
 import { useState } from "react";
 import ModalIndividual from "../Home/ModalIndividual";
 import { useGetCurrentUser } from "@/features/Auth";
+import ModalUserFollow from "./ModalUserFollow";
 
 function Individual() {
   const currentInformation = useGetCurrentUser();
-  const [activeTab, setActiveTab] = useState("Thread");
 
+  const [activeTab, setActiveTab] = useState("Thread");
   const tabs = ["Thread", "Thread trả lời", "File phương tiện", "Bài đăng lại"];
 
   return (
@@ -50,7 +50,9 @@ function Individual() {
 
             {/* Icon trang cá nhân  */}
             <div className="flex justify-between items-center mb-6">
-              <p className="text-gray-600 text-sm"> 3 người theo dõi</p>
+              <ModalUserFollow>
+                <p className="text-gray-600 text-sm"> người theo dõi</p>
+              </ModalUserFollow>
               <div className="flex gap-2">
                 <button className="p-2 hover:bg-gray-100 rounded-full">
                   <Instagram className="w-5 h-5 text-gray-600" />

@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { loginSchema } from "@/util/validate";
 import { useAutoLogin, useGetCurrentUser } from "@/features/Auth";
+import { useFetchUser } from "@/features/Auth/authUser/hook";
 import toast, { Toaster } from "react-hot-toast";
 
 function Login() {
@@ -22,20 +23,21 @@ function Login() {
   });
   const AutoLogin = useAutoLogin();
   const CurrentUser = useGetCurrentUser();
+  const fetchUserInfo = useFetchUser();
   const navigate = useNavigate();
 
   const onSubmit = async (data) => {
     console.log(data);
     try {
       const result = await AutoLogin(data);
+      console.log("Login result:", result); // Debug log
+
       // Phần lưu access và refresh
       if (result && result.access_token && result.refresh_token) {
         localStorage.setItem("access_token", result.access_token);
         localStorage.setItem("refresh_token", result.refresh_token);
-        //  Phần Lưu thông tin user
-        if (result.user) {
-          localStorage.setItem("user_data", JSON.stringify(result.user));
-        }
+        // Gọi API Get User Info và lưu vào Redux
+        await fetchUserInfo();
         toast.success("Đăng nhập thành công!", {
           duration: 2000,
           position: "top-right",
