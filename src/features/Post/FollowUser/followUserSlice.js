@@ -1,5 +1,6 @@
 import { followUserService } from "@/service/FollowUser/followUser";
 import { createSlice } from "@reduxjs/toolkit";
+import { act } from "react";
 const initialState = {
   list: [],
   isFollowUser: false,
@@ -11,9 +12,13 @@ export const followUserSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(followUserService.fulfilled, (state, action) => {
-      state.list = action.payload;
-      state.currentFollowUser = action.payload;
-      state.isFollowUser = true;
+      state.list.forEach((user) => {
+        if (user.id === action.payload.userId) {
+          state.list = action.payload;
+          state.currentFollowUser = action.payload;
+          state.isFollowUser = true;
+        }
+      });
     });
   },
 });

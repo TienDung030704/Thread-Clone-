@@ -1,4 +1,3 @@
-import { followUserService } from "@/service/FollowUser/followUser";
 import { unFollowUserService } from "@/service/UnfollowUser/UnFollowUser";
 import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
@@ -12,9 +11,13 @@ export const unFollowUserSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(unFollowUserService.fulfilled, (state, action) => {
-      state.list = action.payload;
-      state.currentUnFollowUser = action.payload;
-      state.isUnFollowUser = true;
+      state.list.forEach((user) => {
+        if (user.id === action.payload.userId) {
+          state.list = action.payload;
+          state.currentFollowUser = action.payload;
+          state.isUnFollowUser = true;
+        }
+      });
     });
   },
 });

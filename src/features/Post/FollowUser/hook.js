@@ -1,6 +1,6 @@
 import { followUserService } from "@/service/FollowUser/followUser";
 import { useDispatch, useSelector } from "react-redux";
-// Hàm dispatch SavePost
+// Hàm dispatch FollowUser
 export const useFollowUser = () => {
   const dispatch = useDispatch();
   const followUser = async (userId) => {

@@ -11,12 +11,23 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useCurrentUser, useFetchUser } from "@/features/Auth/authUser/hook";
 import { useGetCurrentInformation } from "@/features/Post/postDetail/hook";
 import { ChevronRight, Users } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 function ModalIndividual() {
   const [instagramEnabled, setInstagramEnabled] = useState(true);
-  const currentInformation = useGetCurrentInformation();
+  const currentUser = useCurrentUser();
+  const fetchUserInfo = useFetchUser();
+  useEffect(() => {
+    const access_token = localStorage.getItem("access_token");
+    if (
+      access_token &&
+      (!currentUser || Object.keys(currentUser).length === 0)
+    ) {
+      fetchUserInfo();
+    }
+  }, [currentUser, fetchUserInfo]);
   return (
     <div>
       <div>
@@ -40,7 +51,7 @@ function ModalIndividual() {
                 <div className="flex items-center justify-between py-2">
                   <div>
                     <div className="font-medium">
-                      {currentInformation?.username || ""}
+                      {currentUser?.username || ""}
                     </div>
                   </div>
                   <Users className="w-5 h-5 text-gray-400" />

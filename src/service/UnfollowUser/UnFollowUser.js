@@ -5,11 +5,13 @@ export const unFollowUserService = createAsyncThunk(
   "follow/unFollowUserService",
   async (userId, { rejectWithValue }) => {
     try {
-      const response = await http.post(`users/${userId}/follow`, userId);
+      const response = await http.post(`users/${userId}/follow`, {
+        _method: "DELETE",
+      });
       return response.data;
     } catch (error) {
       return rejectWithValue(
-        err.response?.data || { message: "Follow failed" }
+        error.response?.data || { message: "Follow failed" }
       );
     }
   }

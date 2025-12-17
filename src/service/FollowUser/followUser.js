@@ -8,9 +8,7 @@ export const followUserService = createAsyncThunk(
       const response = await http.post(`users/${userId}/follow`, userId);
       return response.data;
     } catch (error) {
-      return rejectWithValue(
-        err.response?.data || { message: "Follow failed" }
-      );
+      return rejectWithValue(error.response?.data);
     }
   }
 );

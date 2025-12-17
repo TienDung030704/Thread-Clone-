@@ -1,19 +1,19 @@
-import { followUserService } from "@/service/FollowUser/followUser";
+import { unFollowUserService } from "@/service/UnfollowUser/UnFollowUser";
 import { useDispatch, useSelector } from "react-redux";
 // Hàm dispatch SavePost
-export const useFollowUser = () => {
+export const useUnFollowUser = () => {
   const dispatch = useDispatch();
-  const followUser = async (userId) => {
-    const result = await dispatch(followUserService(userId));
+  const unFollowUser = async (userId) => {
+    const result = await dispatch(unFollowUserService(userId));
     console.log("user", result);
     return result.payload;
   };
-  return followUser;
+  return unFollowUser;
 };
 export const useGetCurrentFollowUser = () => {
   const currentFollowUser = useSelector(
-    (state) => state.list.currentFollowUser
+    (state) => state.list.currentUnFollowUser
   );
-  console.log("currentFollowUser:", currentFollowUser);
+  console.log("currentFollowUser:", currentUnFollowUser);
   return currentFollowUser;
 };

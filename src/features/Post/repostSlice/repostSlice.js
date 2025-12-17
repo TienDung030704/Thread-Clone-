@@ -12,6 +12,7 @@ export const repostSlice = createSlice({
     builder.addCase(repostService.fulfilled, (state, action) => {
       state.list.forEach((post) => {
         if (post.id === action.payload.postId) {
+          state.list = action.payload;
           post.reposts_and_quotes_count++;
           state.isRePosted = true;
         }

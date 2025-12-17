@@ -34,7 +34,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useAutoReplyComment } from "@/features/Post/getCommentReply/hook";
-import { useGetCurrentUser } from "@/features/Auth";
+import { useCurrentUser, useFetchUser } from "@/features/Auth/authUser/hook";
 function PostDetails() {
   const [post, setPost] = useState({});
   const [replyComment, setreplyComment] = useState([]);
@@ -45,7 +45,19 @@ function PostDetails() {
   const autoProduct = useAutoPostDetail();
   const currentPost = useGetCurrentInformation();
   const postId = param.postId;
-  const currentUser = useGetCurrentUser();
+  const currentUser = useCurrentUser();
+  const fetchUserInfo = useFetchUser();
+
+  // UseEffect fetch user info nếu chưa có khi reload
+  useEffect(() => {
+    const access_token = localStorage.getItem("access_token");
+    if (
+      access_token &&
+      (!currentUser || Object.keys(currentUser).length === 0)
+    ) {
+      fetchUserInfo();
+    }
+  }, [currentUser, fetchUserInfo]);
 
   // UseEffect render ra dữ liệu bài post
   useEffect(() => {
@@ -261,7 +273,7 @@ function PostDetails() {
                             <div className="flex items-center justify-between mb-1">
                               <div className="flex items-center gap-2">
                                 <span className="font-semibold text-black text-sm">
-                                  {comment?.user?.username}
+                                  {currentPost?.user?.username}
                                 </span>
                                 <span className="text-gray-500 text-xs">
                                   {new Date(comment.created_at).toLocaleString(
@@ -366,6 +378,9 @@ function PostDetails() {
                               postId={comment?.id}
                               userHasLiked={comment?.is_liked_by_auth}
                               userHasRepost={comment?.is_reposted_by_auth}
+                              postReply={currentPost}
+                              postDetail={currentPost}
+                              userAuthName={currentUser}
                             />
                           </div>
                         </div>

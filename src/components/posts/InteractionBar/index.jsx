@@ -31,7 +31,7 @@ function InteractionBar({
   const [isLiked, setIsLiked] = useState(userHasLiked);
   const [repostCount, setRepostCount] = useState(reposts);
   const [isReposted, setIsReposted] = useState(userHasRepost);
-  const autoRepost = useAutoRePost(postId);
+  const autoRepost = useAutoRePost();
   const handleLike = async (postId) => {
     try {
       if (!isLiked) {
@@ -54,6 +54,7 @@ function InteractionBar({
         setRepostCount(repostCount + 1);
         setIsReposted(true);
         await autoRepost(postId);
+        toast.success("Đã đăng bài thành công!");
       } else {
         setRepostCount(repostCount - 1);
         setIsReposted(false);
@@ -82,7 +83,7 @@ function InteractionBar({
     {
       icon: Repeat2,
       count: repostCount,
-      action: () => handleRepost(postId),
+      action: null, // Đổi thành null vì sẽ dùng dropdown
       key: "repost",
     },
     { icon: Share, count: shares, action: null, key: "share" }, // Share action null vì dropdown sẽ xử lý
@@ -124,12 +125,31 @@ function InteractionBar({
               >
                 {ActionButton}
               </ReplyModal>
-            ) : item.key === "share" ? (
-              // 2. Trường hợp Share (SỬA Ở ĐÂY)
+            ) : item.key === "repost" ? (
+              // 2. Trường hợp Repost (DROPDOWN)
               <DropdownMenu modal={false}>
-                {/* asChild giúp Trigger nhận diện ActionButton là phần tử kích hoạt */}
                 <DropdownMenuTrigger>{ActionButton}</DropdownMenuTrigger>
-
+                <DropdownMenuContent align="start">
+                  <DropdownMenuItem
+                    className="font-medium text-[16px]"
+                    onClick={() => handleRepost(postId)}
+                  >
+                    <Repeat2 className="mr-2 h-4 w-4" />
+                    {isReposted ? "Hủy repost" : "Repost"}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="font-medium text-[16px]"
+                    onClick={() => console.log("Quote post")}
+                  >
+                    <MessageCircle className="mr-2 h-4 w-4" />
+                    Trích dẫn
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : item.key === "share" ? (
+              // 3. Trường hợp Share
+              <DropdownMenu modal={false}>
+                <DropdownMenuTrigger>{ActionButton}</DropdownMenuTrigger>
                 <DropdownMenuContent align="start">
                   <CopyToClipboard text={postUrl} onCopy={handleCopy}>
                     <DropdownMenuItem className="font-medium text-[16px]">
@@ -153,7 +173,7 @@ function InteractionBar({
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              // 3. Trường hợp Like, Repost (Nút thường)
+              // 4. Trường hợp Like (Nút thường)
               ActionButton
             )}
 

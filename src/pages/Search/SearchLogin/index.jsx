@@ -23,11 +23,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useFollowUser } from "@/features/Post/FollowUser/hook";
 import toast, { Toaster } from "react-hot-toast";
+import { useUnFollowUser } from "@/features/Post/UnFollowUser/hook";
 function SearchLogin() {
   const [list, setList] = useState([]);
   const autoSearch = useAutoSearch();
+
   const [loading, setLoading] = useState(false);
   const currentFollowUsers = useFollowUser();
+  const currentUnFollowUser = useUnFollowUser();
   useEffect(() => {
     setLoading(true);
     const fetchData = async () => {
@@ -49,9 +52,9 @@ function SearchLogin() {
   const handleFollowUser = async (userId) => {
     try {
       const currentUser = list.find((user) => user.id === userId);
-      const result = currentFollowUsers(userId);
-      console.log(result);
-      if (result) {
+      const isCurrentlyFollowing = currentUser.is_followed_by;
+      if (!isCurrentlyFollowing) {
+        await currentFollowUsers(userId);
         setList((prevList) =>
           prevList.map((user) =>
             user.id === userId
@@ -59,13 +62,17 @@ function SearchLogin() {
               : user
           )
         );
-        if (!currentUser.is_followed_by) {
-          toast.success("Đã theo dõi thành công");
-          return result;
-        } else {
-          toast.success("Đã bỏ theo dõi người dùng ");
-          return result;
-        }
+        toast.success("Đã theo dõi thành công");
+      } else {
+        await currentUnFollowUser(userId);
+        setList((prevList) =>
+          prevList.map((user) =>
+            user.id === userId
+              ? { ...user, is_followed_by: !user.is_followed_by }
+              : user
+          )
+        );
+        toast.success("Đã bỏ theo dõi người dùng ");
       }
     } catch (error) {
       console.log(error);
